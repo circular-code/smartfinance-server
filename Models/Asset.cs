@@ -2,8 +2,8 @@ namespace Smartfinance_server.Models
 {
     public class Asset
     {
-        public string name { get; set; }
-        public int value { get; set; }
-        public int debt { get; set; }
+        public string Name { get; set; }
+        public int Value { get; set; }
+        public int Debt { get; set; }
     }
 }
