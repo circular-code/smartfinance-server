@@ -15,7 +15,7 @@ namespace Smartfinance_server.Data
             };
         }
 
-        public Asset GetAssetById(int id)
+        public Asset GetAssetById(uint id)
         {
             return new Asset{Name="test", Value=12, Debt= 8};
         }

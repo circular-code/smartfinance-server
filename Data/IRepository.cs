@@ -6,6 +6,6 @@ namespace Smartfinance_server.Data
 	public interface IRepository
     {
         IEnumerable<Asset> GetAllAssets();
-        Asset GetAssetById(int id);
+        Asset GetAssetById(uint id);
     }
 }

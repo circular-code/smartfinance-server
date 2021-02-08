@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Steph\\Desktop\\code\\smartfinance-server\\smartfinance-server.csproj": {}
+    "C:\\Users\\steph\\Desktop\\github\\smartfinance-server\\smartfinance-server.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Steph\\Desktop\\code\\smartfinance-server\\smartfinance-server.csproj": {
+    "C:\\Users\\steph\\Desktop\\github\\smartfinance-server\\smartfinance-server.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Steph\\Desktop\\code\\smartfinance-server\\smartfinance-server.csproj",
+        "projectUniqueName": "C:\\Users\\steph\\Desktop\\github\\smartfinance-server\\smartfinance-server.csproj",
         "projectName": "smartfinance-server",
-        "projectPath": "C:\\Users\\Steph\\Desktop\\code\\smartfinance-server\\smartfinance-server.csproj",
-        "packagesPath": "C:\\Users\\Steph\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Steph\\Desktop\\code\\smartfinance-server\\obj\\",
+        "projectPath": "C:\\Users\\steph\\Desktop\\github\\smartfinance-server\\smartfinance-server.csproj",
+        "packagesPath": "C:\\Users\\steph\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\steph\\Desktop\\github\\smartfinance-server\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Steph\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\steph\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [

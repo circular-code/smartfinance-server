@@ -9,7 +9,13 @@ namespace Smartfinance_server.Controllers
     [ApiController]
     public class AssetsController : ControllerBase
     {
-        private readonly MockRepository _repo = new MockRepository();
+
+        private readonly IRepository _repo;
+
+        public AssetsController(IRepository repo)
+        {
+            _repo = repo;
+        }
 
         //GET api/assets
         [HttpGet]
@@ -21,7 +27,7 @@ namespace Smartfinance_server.Controllers
 
         //GET api/assets/id
         [HttpGet("{id}")]
-        public ActionResult <Asset> GetAssetById(int id)
+        public ActionResult <Asset> GetAssetById(uint id)
         {
             var asset = _repo.GetAssetById(id);
             return Ok(asset);
