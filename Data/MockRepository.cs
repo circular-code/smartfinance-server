@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using MySql.Data.MySqlClient;
 using Smartfinance_server.Models;
 
 namespace Smartfinance_server.Data
@@ -7,12 +9,28 @@ namespace Smartfinance_server.Data
     {
         public IEnumerable<Asset> GetAllAssets()
         {
-            return new List<Asset>
+            List<Asset> list = new List<Asset>();
+
+            using (MySqlConnection conn = DbContext.GetConnection())
             {
-                new Asset{Name="Auto", Value=30000, Debt=18000},
-                new Asset{Name="Haus", Value=120000, Debt=80000},
-                new Asset{Name="Studium", Value=34000, Debt=8000}
-            };
+                conn.Open();
+                MySqlCommand cmd = new MySqlCommand("select * from Assets where id < 10", conn);
+
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        list.Add(new Asset()
+                        {
+                            Id = Convert.ToInt32(reader["Id"]),
+                            Name = reader["Name"].ToString(),
+                            Value = Convert.ToInt32(reader["Value"]),
+                            Debt = Convert.ToInt32(reader["Debt"])
+                        });
+                    }
+                }
+            }
+            return list;
         }
 
         public Asset GetAssetById(uint id)

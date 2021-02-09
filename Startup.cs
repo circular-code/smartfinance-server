@@ -1,16 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.OpenApi.Models;
 using Smartfinance_server.Data;
+using Smartfinance_server.Models;
 
 namespace Smartfinance_server
 {
@@ -27,6 +21,7 @@ namespace Smartfinance_server
         {
             services.AddControllers();
             services.AddScoped<IRepository, MockRepository>();
+            services.Add(new ServiceDescriptor(typeof(DbContext), new DbContext(Configuration.GetConnectionString("DefaultConnection"))));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
