@@ -20,7 +20,7 @@ namespace Smartfinance_server
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddScoped<IRepository, MockRepository>();
+            services.AddScoped<QueryEngine>();
             services.Add(new ServiceDescriptor(typeof(DbContext), new DbContext(Configuration.GetConnectionString("DefaultConnection"))));
         }
 

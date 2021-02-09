@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Smartfinance_server.Models
+namespace Smartfinance_server.Data
 {
     public class DbContext
     {

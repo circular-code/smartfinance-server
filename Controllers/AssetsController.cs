@@ -10,17 +10,17 @@ namespace Smartfinance_server.Controllers
     public class AssetsController : ControllerBase
     {
 
-        private readonly IRepository _repo;
+        private readonly QueryEngine _qe;
 
-        public AssetsController(IRepository repo)
+        public AssetsController(QueryEngine qe)
         {
-            _repo = repo;
+            _qe = qe;
         }
 
         //GET api/assets
         [HttpGet]
         public ActionResult <IEnumerable<Asset>> GetAllAssets() {
-            var assets = _repo.GetAllAssets();
+            var assets = _qe.GetAllAssets();
 
             return Ok(assets);
         }
@@ -29,7 +29,7 @@ namespace Smartfinance_server.Controllers
         [HttpGet("{id}")]
         public ActionResult <Asset> GetAssetById(uint id)
         {
-            var asset = _repo.GetAssetById(id);
+            var asset = _qe.GetAssetById(id);
             return Ok(asset);
         }
     }

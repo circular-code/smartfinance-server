@@ -5,7 +5,7 @@ using Smartfinance_server.Models;
 
 namespace Smartfinance_server.Data
 {
-    public class MockRepository : IRepository
+    public class QueryEngine
     {
         public IEnumerable<Asset> GetAllAssets()
         {
@@ -35,7 +35,28 @@ namespace Smartfinance_server.Data
 
         public Asset GetAssetById(uint id)
         {
-            return new Asset{Name="test", Value=12, Debt= 8};
+
+            Asset asset = new Asset();
+
+            using (MySqlConnection conn = DbContext.GetConnection())
+            {
+                conn.Open();
+                MySqlCommand cmd = new MySqlCommand("select * from Assets where id = " + id, conn);
+
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        asset = new Asset(){
+                            Id = Convert.ToInt32(reader["Id"]),
+                            Name = reader["Name"].ToString(),
+                            Value = Convert.ToInt32(reader["Value"]),
+                            Debt = Convert.ToInt32(reader["Debt"])
+                        };
+                    }
+                }
+            }
+            return asset;
         }
     }
 }
