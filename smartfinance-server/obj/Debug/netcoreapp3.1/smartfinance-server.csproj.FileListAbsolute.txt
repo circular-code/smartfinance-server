@@ -1,4 +1,0 @@
-C:\Users\Steph\Desktop\code\smartfinance-server\smartfinance-server\obj\Debug\netcoreapp3.1\smartfinance-server.csprojAssemblyReference.cache
-C:\Users\Steph\Desktop\code\smartfinance-server\smartfinance-server\obj\Debug\netcoreapp3.1\smartfinance-server.AssemblyInfoInputs.cache
-C:\Users\Steph\Desktop\code\smartfinance-server\smartfinance-server\obj\Debug\netcoreapp3.1\smartfinance-server.AssemblyInfo.cs
-C:\Users\Steph\Desktop\code\smartfinance-server\smartfinance-server\obj\Debug\netcoreapp3.1\smartfinance-server.csproj.CoreCompileInputs.cache
