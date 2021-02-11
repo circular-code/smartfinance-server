@@ -18,6 +18,8 @@ namespace Smartfinance_server.Controllers
         }
 
         //GET api/assets
+        //get all assets
+        //TODO: limit with skip & take, filter etc. like devextreme params
         [HttpGet]
         public ActionResult <IEnumerable<Asset>> GetAllAssets() {
             var assets = _qe.GetAllAssets();
@@ -26,7 +28,38 @@ namespace Smartfinance_server.Controllers
         }
 
         //GET api/assets/id
+        //get a specific assets
         [HttpGet("{id}")]
+        public ActionResult <Asset> GetAssetById(uint id)
+        {
+            var asset = _qe.GetAssetById(id);
+            return Ok(asset);
+        }
+
+        //PUT api/assets/id
+        //update a specific asset in full
+        //TODO: probably not necessary
+        [HttpPut("{id}")]
+        public ActionResult <Asset> GetAssetById(uint id)
+        {
+            var asset = _qe.GetAssetById(id);
+            return Ok(asset);
+        }
+
+        //PUT api/assets/id
+        //update a specific asset in full
+        //TODO: probably not necessary
+        [HttpPut("{id}")]
+        public ActionResult <Asset> GetAssetById(uint id)
+        {
+            var asset = _qe.GetAssetById(id);
+            return Ok(asset);
+        }
+
+        //HEAD api/assets
+        //efficiently lookup whether large assets have been updated in conjunction with the ETag-header.
+        //TODO: probably not necessary
+        [HttpHead("{id}")]
         public ActionResult <Asset> GetAssetById(uint id)
         {
             var asset = _qe.GetAssetById(id);
