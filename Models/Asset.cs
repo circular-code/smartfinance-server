@@ -2,6 +2,7 @@ namespace Smartfinance_server.Models
 {
     public class Asset
     {
+        public string user { get; set; }
         public int Id { get; set; }
         public string CreationDate { get; set; }
         public string AcquiredDate { get; set; }
