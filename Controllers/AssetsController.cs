@@ -50,7 +50,7 @@ namespace Smartfinance_server.Controllers
         [HttpPost]
         public ActionResult <Asset> Create(Asset asset)
         {
-            var asset = _qe.CreateAsset(asset);
+            var asset = _qe.Create(asset);
             return CreatedAtAction(asset);
         }
 
@@ -59,7 +59,7 @@ namespace Smartfinance_server.Controllers
         [HttpPatch("{id}")]
         public ActionResult <Asset> Create(Asset asset)
         {
-            var asset = _qe.Create(asset);
+            var asset = _qe.CreateAsset(asset);
             return CreatedAtAction(asset);
         }
 
