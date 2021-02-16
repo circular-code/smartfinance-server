@@ -37,8 +37,7 @@ namespace Smartfinance_server.Controllers
         }
 
         //PUT api/assets/id
-        //update a specific asset in full
-        //TODO: probably not necessary
+        //update/replace the whole asset
         [HttpPut("{id}")]
         public ActionResult <Asset> GetAssetById(uint id)
         {
@@ -46,19 +45,35 @@ namespace Smartfinance_server.Controllers
             return Ok(asset);
         }
 
-        //PUT api/assets/id
-        //update a specific asset in full
-        //TODO: probably not necessary
-        [HttpPut("{id}")]
-        public ActionResult <Asset> GetAssetById(uint id)
+        //POST api/assets
+        //create a asset in full
+        [HttpPost]
+        public ActionResult <Asset> Create(Asset asset)
         {
-            var asset = _qe.GetAssetById(id);
-            return Ok(asset);
+            var asset = _qe.CreateAsset(asset);
+            return CreatedAtAction(asset);
+        }
+
+        //PATCH api/assets/id
+        //update part of an asset
+        [HttpPatch("{id}")]
+        public ActionResult <Asset> Create(Asset asset)
+        {
+            var asset = _qe.Create(asset);
+            return CreatedAtAction(asset);
+        }
+
+        //DELETE api/assets/id
+        //delete a specific asset
+        [HttpDelete("{id}")]
+        public ActionResult <Asset> Create(Asset asset)
+        {
+            var asset = _qe.CreateAsset(asset);
+            return CreatedAtAction(asset);
         }
 
         //HEAD api/assets
         //efficiently lookup whether large assets have been updated in conjunction with the ETag-header.
-        //TODO: probably not necessary
         [HttpHead("{id}")]
         public ActionResult <Asset> GetAssetById(uint id)
         {
