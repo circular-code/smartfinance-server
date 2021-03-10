@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Smartfinance_server.Data;
 using Smartfinance_server.Models;
+using System.Text.Json;
 
 // https://docs.microsoft.com/en-us/aspnet/core/mvc/controllers/routing
 // https://docs.microsoft.com/en-us/aspnet/core/tutorials/first-web-api?view=aspnetcore-5.0&tabs=visual-studio
@@ -45,7 +46,7 @@ namespace Smartfinance_server.Controllers
         //POST api/assets
         //create a asset in full
         [HttpPost]
-        public ActionResult<Asset> CreateAsset(Asset asset)
+        public ActionResult CreateAsset(Asset asset)
         {
             var newAsset = _qe.CreateAsset(asset);
 
@@ -55,28 +56,25 @@ namespace Smartfinance_server.Controllers
             return NoContent();
         }
 
-        // since PATCH requres additional dependencies (jsonpatch), we are not going to use it
-        //PATCH api/assets/id
-        //update part of an asset
-        // [HttpPatch("{id}")]
-        // public ActionResult<Asset> UpdateAsset(uint id)
-        // {
-        //     return Ok(_qe.UpdateAsset(asset));
-        // }
+        // PUT api/assets/id
+        // update asset data (excluding id)
+        // we are missusing PUT to Update existing Assets instead of PATCH since PATCH requres additional dependencies (jsonpatch) and a different endpoint-style; see https://docs.microsoft.com/en-us/aspnet/core/web-api/jsonpatch?view=aspnetcore-5.0
+        [HttpPut("{id}")]
+        public ActionResult UpdateAsset(uint id, [FromBody] Dictionary<string, JsonElement> updates)
+        {
+            var asset = _qe.GetAsset(id);
 
-        // we are missusing PUT to Update existing Assets instead of patch
-        //PUT api/assets/id
-        //replace asset if existing or create the asset if not existing
-        // [HttpPut("{id}")]
-        // public ActionResult <Asset> ReplaceAsset(uint id)
-        // {
-        //     return Ok(_qe.ReplaceAsset(id));
-        // }
+            if (asset == null)
+                return NotFound();
+
+            _qe.UpdateAsset(id, updates);
+            return NoContent();
+        }
 
         // DELETE api/assets/id
         // delete a specific asset
         [HttpDelete("{id}")]
-        public ActionResult<Asset> DeleteAsset(uint id)
+        public ActionResult DeleteAsset(uint id)
         {
             var asset = _qe.GetAsset(id);
 

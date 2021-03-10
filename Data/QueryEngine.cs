@@ -1,7 +1,9 @@
 using System;
+using System.Text;
 using System.Collections.Generic;
 using MySql.Data.MySqlClient;
 using Smartfinance_server.Models;
+using System.Text.Json;
 
 namespace Smartfinance_server.Data
 {
@@ -117,32 +119,51 @@ namespace Smartfinance_server.Data
             return asset;
         }
 
-        //TODO:
-        // public Asset UpdateAsset(Asset asset)
-        // {
-        //     using (MySqlConnection conn = DbContext.GetConnection())
-        //     {
-        //         conn.Open();
+        public object UpdateAsset(uint id, Dictionary<string, JsonElement> updates)
+        {
+            using (MySqlConnection conn = DbContext.GetConnection())
+            {
+                conn.Open();
+                
+                StringBuilder sb = new StringBuilder("");
+                MySqlCommand cmd = new MySqlCommand("", conn);
 
-        //         MySqlCommand cmd = new MySqlCommand("INSERT INTO asset (User,CreationDate,ContractDate,CurrentValue,Currency,PrimaryTransactionId,Description,Type,CurrentQuantity,LiabilityIds,TransactionIds) VALUES (@User,@CreationDate,@ContractDate,@CurrentValue,@Currency,@PrimaryTransactionId,@Description,@Type,@CurrentQuantity,@LiabilityIds,@TransactionIds)", conn);
-        //         if (asset.User)
-        //         cmd.Parameters.Add("@User",                 MySqlDbType.VarChar).Value = asset.User;
-        //         cmd.Parameters.Add("@CreationDate",         MySqlDbType.VarChar).Value = asset.CreationDate;
-        //         cmd.Parameters.Add("@ContractDate",         MySqlDbType.VarChar).Value = asset.ContractDate;
-        //         cmd.Parameters.Add("@CurrentValue",         MySqlDbType.Decimal).Value = asset.CurrentValue;
-        //         cmd.Parameters.Add("@Currency",             MySqlDbType.VarChar).Value = asset.Currency;
-        //         cmd.Parameters.Add("@PrimaryTransactionId", MySqlDbType.UInt16 ).Value = asset.PrimaryTransactionId;
-        //         cmd.Parameters.Add("@Description",          MySqlDbType.VarChar).Value = asset.Description;
-        //         cmd.Parameters.Add("@Type",                 MySqlDbType.VarChar).Value = asset.Type;
-        //         cmd.Parameters.Add("@CurrentQuantity",      MySqlDbType.Decimal).Value = asset.CurrentQuantity;
-        //         cmd.Parameters.Add("@LiabilityIds",         MySqlDbType.VarChar).Value = asset.LiabilityIds;
-        //         cmd.Parameters.Add("@TransactionIds",       MySqlDbType.VarChar).Value = asset.TransactionIds;
+                foreach(KeyValuePair<string, JsonElement> kvp in updates) 
+                {
+                    switch (kvp.Key) {
 
-        //         cmd.ExecuteNonQuery();
-        //         conn.Close();
-        //     }
-        //     return asset;
-        // }
+                        case "user":
+                        case "creationDate":
+                        case "contractDate":
+                        case "currency":
+                        case "description":
+                        case "type":
+                        case "liabilityIds":
+                        case "transactionIds":
+                            sb.Insert(0, kvp.Key + "=@" + kvp.Key + ",");
+                            cmd.Parameters.Add("@" + kvp.Key, MySqlDbType.VarChar).Value = kvp.Value.GetString();
+                            break;
+
+                        case "currentValue":
+                        case "currentQuantity":
+                            sb.Insert(0, kvp.Key + "=@" + kvp.Key + ",");
+                            cmd.Parameters.Add("@" + kvp.Key, MySqlDbType.Decimal).Value = kvp.Value.GetDecimal();
+                            break;
+
+                        case "primaryTransactionId":
+                            sb.Insert(0, kvp.Key + "=@" + kvp.Key + ",");
+                            cmd.Parameters.Add("@" + kvp.Key, MySqlDbType.UInt16).Value = kvp.Value.GetInt16();
+                            break;
+                    }
+                }
+
+                cmd.CommandText = "UPDATE asset SET " + sb.ToString().TrimEnd(',') + " WHERE id = " + id;
+
+                cmd.ExecuteNonQuery();
+                conn.Close();
+            }
+            return id;
+        }
 
         public void DeleteAsset(uint id)
         {
