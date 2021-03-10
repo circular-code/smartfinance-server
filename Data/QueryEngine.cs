@@ -179,5 +179,148 @@ namespace Smartfinance_server.Data
         }
 
         #endregion
+
+        #region Transaction
+            
+        public IEnumerable<Transaction> GetAllTransactions()
+        {
+            List<Transaction> list = new List<Transaction>();
+
+            using (MySqlConnection conn = DbContext.GetConnection())
+            {
+                conn.Open();
+                MySqlCommand cmd = new MySqlCommand("select * from transaction", conn);
+
+                using (MySqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        list.Add(new Transaction()
+                        {
+                            User = reader["User"].ToString(),
+                            Id = Convert.ToInt32(reader["Id"]),
+                            BookingDate = reader["BookingDate"].ToString(),
+                            ValueDate = reader["ValueDate"].ToString(),
+                            Amount = Convert.ToDecimal(reader["Amount"]),
+                            Currency = reader["Currency"].ToString(),
+                            Description = reader["Description"].ToString(),
+                            Type = reader["Type"].ToString(),
+                            Saldo = Convert.ToDecimal(reader["Saldo"]),
+                            Counterparty = reader["Counterparty"].ToString()
+                        });
+                    }
+                }
+            }
+            return list;
+        }
+
+        public Transaction GetTransaction(uint id)
+        {
+            Transaction transaction = new Transaction();
+
+            using (MySqlConnection conn = DbContext.GetConnection())
+            {
+                conn.Open();
+                MySqlCommand cmd = new MySqlCommand("select * from transaction where id = " + id, conn);
+
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        transaction = new Transaction(){
+                            User = reader["User"].ToString(),
+                            Id = Convert.ToInt32(reader["Id"]),
+                            BookingDate = reader["BookingDate"].ToString(),
+                            ValueDate = reader["ValueDate"].ToString(),
+                            Amount = Convert.ToDecimal(reader["Amount"]),
+                            Currency = reader["Currency"].ToString(),
+                            Description = reader["Description"].ToString(),
+                            Type = reader["Type"].ToString(),
+                            Saldo = Convert.ToDecimal(reader["Saldo"]),
+                            Counterparty = reader["Counterparty"].ToString()
+                        };
+                    }
+                }
+            }
+            return transaction;
+        }
+
+        public Transaction CreateTransaction(Transaction transaction)
+        {
+            using (MySqlConnection conn = DbContext.GetConnection())
+            {
+                conn.Open();
+
+                MySqlCommand cmd = new MySqlCommand("INSERT INTO transaction (User,BookingDate,ValueDate,Amount,Currency,Description,Type,Saldo,Counterparty) VALUES (@User,@BookingDate,@ValueDate,@Amount,@Currency,@Description,@Type,@Saldo,@Counterparty)", conn);
+                cmd.Parameters.Add("@User",                 MySqlDbType.VarChar).Value = transaction.User;
+                cmd.Parameters.Add("@BookingDate",          MySqlDbType.VarChar).Value = transaction.BookingDate;
+                cmd.Parameters.Add("@ValueDate",            MySqlDbType.VarChar).Value = transaction.ValueDate;
+                cmd.Parameters.Add("@Amount",               MySqlDbType.Decimal).Value = transaction.Amount;
+                cmd.Parameters.Add("@Currency",             MySqlDbType.VarChar).Value = transaction.Currency;
+                cmd.Parameters.Add("@Description",          MySqlDbType.VarChar).Value = transaction.Description;
+                cmd.Parameters.Add("@Type",                 MySqlDbType.VarChar).Value = transaction.Type;
+                cmd.Parameters.Add("@Saldo",                MySqlDbType.Decimal).Value = transaction.Saldo;
+                cmd.Parameters.Add("@Counterparty",         MySqlDbType.VarChar).Value = transaction.Counterparty;
+
+                cmd.ExecuteNonQuery();
+                conn.Close();
+            }
+            return transaction;
+        }
+
+        public object UpdateTransaction(uint id, Dictionary<string, JsonElement> updates)
+        {
+            using (MySqlConnection conn = DbContext.GetConnection())
+            {
+                conn.Open();
+                
+                StringBuilder sb = new StringBuilder("");
+                MySqlCommand cmd = new MySqlCommand("", conn);
+
+                foreach(KeyValuePair<string, JsonElement> kvp in updates) 
+                {
+                    switch (kvp.Key) {
+
+                        case "user":
+                        case "BookingDate":
+                        case "ValueDate":
+                        case "currency":
+                        case "description":
+                        case "type":
+                        case "Counterparty":
+                            sb.Insert(0, kvp.Key + "=@" + kvp.Key + ",");
+                            cmd.Parameters.Add("@" + kvp.Key, MySqlDbType.VarChar).Value = kvp.Value.GetString();
+                            break;
+
+                        case "Amount":
+                        case "Saldo":
+                            sb.Insert(0, kvp.Key + "=@" + kvp.Key + ",");
+                            cmd.Parameters.Add("@" + kvp.Key, MySqlDbType.Decimal).Value = kvp.Value.GetDecimal();
+                            break;
+                    }
+                }
+
+                cmd.CommandText = "UPDATE transaction SET " + sb.ToString().TrimEnd(',') + " WHERE id = " + id;
+
+                cmd.ExecuteNonQuery();
+                conn.Close();
+            }
+            return id;
+        }
+
+        public void DeleteTransaction(uint id)
+        {
+            using (MySqlConnection conn = DbContext.GetConnection())
+            {
+                conn.Open();
+
+                MySqlCommand cmd = new MySqlCommand("DELETE FROM transaction WHERE id = " + id, conn);
+
+                cmd.ExecuteNonQuery();
+                conn.Close();
+            }
+        }
+
+        #endregion
     }
 }

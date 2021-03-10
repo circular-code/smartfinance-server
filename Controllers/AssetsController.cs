@@ -84,14 +84,5 @@ namespace Smartfinance_server.Controllers
             _qe.DeleteAsset(id);
             return NoContent();
         }
-
-        //HEAD api/assets
-        //efficiently lookup whether large assets have been updated in conjunction with the ETag-header.
-        // [HttpHead("{id}")]
-        // public ActionResult <Asset> GetAssetById(uint id)
-        // {
-        //     var asset = _qe.GetAssetById(id);
-        //     return Ok(asset);
-        // }
     }
 }
