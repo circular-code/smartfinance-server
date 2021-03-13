@@ -16,7 +16,7 @@ async function postData(url = '', data = {}) {
     return response;
 }
 
-postData('/api/assets', {"user":"mars","id":2,"creationDate":"morgen","contractDate":"übermorgen","currentValue":2.0000,"currency":"EUR","primaryTransactionId":4,"description":"testbeschreibung asdf","type":"auto","currentQuantity":9.0000,"liabilityIds":"1,5,2","transactionIds":"4,9,124"})
+// postData('/api/assets', {"user":"mars","id":2,"creationDate":"morgen","contractDate":"übermorgen","currentValue":2.0000,"currency":"EUR","primaryTransactionId":4,"description":"testbeschreibung asdf","type":"auto","currentQuantity":9.0000,"liabilityIds":"1,5,2","transactionIds":"4,9,124"})
 
 async function deleteData(url = '') {
     // Default options are marked with *
@@ -26,7 +26,7 @@ async function deleteData(url = '') {
     return response;
 }
 
-deleteData('/api/assets/1');
+// deleteData('/api/assets/1');
 
 async function updateData(url = '', data = {}) {
     // Default options are marked with *
@@ -46,4 +46,4 @@ async function updateData(url = '', data = {}) {
     return response;
 }
 
-updateData('/api/assets/3', {"user":"asdf"});
+// updateData('/api/assets/3', {"user":"asdf"});

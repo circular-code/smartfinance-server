@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Smartfinance_server.Data;
 using Smartfinance_server.Models;
+using Microsoft.AspNetCore.HttpOverrides;
 
 namespace Smartfinance_server
 {
@@ -26,14 +27,13 @@ namespace Smartfinance_server
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
-                app.UseDeveloperExceptionPage();
-            }
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            });
 
-            app.UseHttpsRedirection();
             app.UseRouting();
-            app.UseAuthorization();
+            // app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

@@ -33,7 +33,7 @@ namespace Smartfinance_server.Data
             using (MySqlConnection conn = DbContext.GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("select * from Asset", conn);
+                MySqlCommand cmd = new MySqlCommand("select * from asset", conn);
 
                 using (MySqlDataReader reader = cmd.ExecuteReader())
                 {
@@ -68,7 +68,7 @@ namespace Smartfinance_server.Data
             using (MySqlConnection conn = DbContext.GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("select * from Asset where id = " + id, conn);
+                MySqlCommand cmd = new MySqlCommand("select * from asset where id = " + id, conn);
 
                 using (var reader = cmd.ExecuteReader())
                 {
@@ -128,10 +128,9 @@ namespace Smartfinance_server.Data
                 StringBuilder sb = new StringBuilder("");
                 MySqlCommand cmd = new MySqlCommand("", conn);
 
-                foreach(KeyValuePair<string, JsonElement> kvp in updates) 
+                foreach(KeyValuePair<string, JsonElement> kvp in updates)
                 {
                     switch (kvp.Key) {
-
                         case "user":
                         case "creationDate":
                         case "contractDate":

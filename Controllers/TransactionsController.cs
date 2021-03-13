@@ -4,6 +4,9 @@ using Smartfinance_server.Data;
 using Smartfinance_server.Models;
 using System.Text.Json;
 
+// TODO import (create multiple) Transactions
+// TODO delete multiple ransactions
+
 namespace Smartfinance_server.Controllers
 
 {
