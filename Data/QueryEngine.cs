@@ -280,19 +280,19 @@ namespace Smartfinance_server.Data
                 {
                     switch (kvp.Key) {
 
-                        case "user":
-                        case "BookingDate":
-                        case "ValueDate":
+                        // case "user":
+                        case "bookingDate":
+                        case "valueDate":
                         case "currency":
                         case "description":
                         case "type":
-                        case "Counterparty":
+                        case "counterparty":
                             sb.Insert(0, kvp.Key + "=@" + kvp.Key + ",");
                             cmd.Parameters.Add("@" + kvp.Key, MySqlDbType.VarChar).Value = kvp.Value.GetString();
                             break;
 
-                        case "Amount":
-                        case "Saldo":
+                        case "amount":
+                        case "saldo":
                             sb.Insert(0, kvp.Key + "=@" + kvp.Key + ",");
                             cmd.Parameters.Add("@" + kvp.Key, MySqlDbType.Decimal).Value = kvp.Value.GetDecimal();
                             break;
