@@ -9,12 +9,12 @@ docker ps -a
 //show all networks
 docker network ls
 
+//enter docker container (in this case db)
+docker exec -it dev-mysql mysql
+
 /////////////////////////////
 release new version of server
 /////////////////////////////
-
-//enter docker container (in this case db)
-docker exec -it dev-mysql mysql
 
 // build deployable version of smartfinance-server (change version number accordingly)
 docker build -t circularcode/smartfinance-server:0.1.6 .

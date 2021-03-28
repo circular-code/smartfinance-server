@@ -52,7 +52,7 @@ namespace Smartfinance_server.Controllers
             if (newTransaction == null)
                 return NotFound();
                 
-            return NoContent();
+            return Ok(newTransaction);
         }
 
         // PUT api/transactions/id

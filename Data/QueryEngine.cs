@@ -114,6 +114,30 @@ namespace Smartfinance_server.Data
                 cmd.Parameters.Add("@TransactionIds",       MySqlDbType.VarChar).Value = asset.TransactionIds;
 
                 cmd.ExecuteNonQuery();
+
+                // TODO: this might be an issue when db calls are made async
+                MySqlCommand cmd2 = new MySqlCommand("select * from asset where id = LAST_INSERT_ID()", conn);
+
+                using (var reader = cmd2.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        asset = new Asset(){
+                            User = reader["User"].ToString(),
+                            Id = Convert.ToInt32(reader["Id"]),
+                            CreationDate = reader["CreationDate"].ToString(),
+                            ContractDate = reader["ContractDate"].ToString(),
+                            CurrentValue = Convert.ToDecimal(reader["CurrentValue"]),
+                            Currency = reader["Currency"].ToString(),
+                            PrimaryTransactionId = Convert.ToInt32(reader["PrimaryTransactionId"]),
+                            Description = reader["Description"].ToString(),
+                            Type = reader["Type"].ToString(),
+                            CurrentQuantity = Convert.ToDecimal(reader["CurrentQuantity"]),
+                            LiabilityIds = reader["LiabilityIds"].ToString(),
+                            TransactionIds = reader["TransactionIds"].ToString()
+                        };
+                    }
+                }
                 conn.Close();
             }
             return asset;
@@ -262,6 +286,29 @@ namespace Smartfinance_server.Data
                 cmd.Parameters.Add("@Counterparty",         MySqlDbType.VarChar).Value = transaction.Counterparty;
 
                 cmd.ExecuteNonQuery();
+
+                // TODO: this might be an issue when db calls are made async
+                MySqlCommand cmd2 = new MySqlCommand("select * from transaction where id = LAST_INSERT_ID()", conn);
+
+                using (var reader = cmd2.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        transaction = new Transaction(){
+                            User = reader["User"].ToString(),
+                            Id = Convert.ToInt32(reader["Id"]),
+                            BookingDate = reader["BookingDate"].ToString(),
+                            ValueDate = reader["ValueDate"].ToString(),
+                            Amount = Convert.ToDecimal(reader["Amount"]),
+                            Currency = reader["Currency"].ToString(),
+                            Description = reader["Description"].ToString(),
+                            Type = reader["Type"].ToString(),
+                            Saldo = Convert.ToDecimal(reader["Saldo"]),
+                            Counterparty = reader["Counterparty"].ToString()
+                        };
+                    }
+                }
+
                 conn.Close();
             }
             return transaction;

@@ -53,7 +53,7 @@ namespace Smartfinance_server.Controllers
             if (newAsset == null)
                 return NotFound();
                 
-            return NoContent();
+            return Ok(newAsset);
         }
 
         // PUT api/assets/id
