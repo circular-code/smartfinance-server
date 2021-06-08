@@ -27,7 +27,7 @@ namespace Smartfinance_server.Controllers
             // 3. wir hashen password und überprüfen pw hash
             // 4. ClaimsPrincipal erstellen anhand von userdaten
             
-            // 5. neue Request vom user mit cookie authorisiert und liefert info über user identifikation die in endpunkt verwendet kann, aus dem cookie muss 
+            // 5. neue Request vom user mit cookie authorisiert und liefert info über user identifikation die in endpunkt verwendet kann, aus dem cookie muss der user irgendwie identifiziert werden können (zurückrechnen des cookies oder so)
 
             List<Claim> ids = new List<Claim>()
             {
