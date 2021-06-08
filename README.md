@@ -1,5 +1,15 @@
 # smartfinance-server
 
+/////////////////////////////
+run local version of server
+/////////////////////////////
+
+dotnet run -c debug
+
+/////////////////////////////
+navigate docker on server
+/////////////////////////////
+
 //show logs
 docker logs smartfinance-server
 
