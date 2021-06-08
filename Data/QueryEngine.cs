@@ -16,10 +16,6 @@ namespace Smartfinance_server.Data
 
         // ExecuteNonQuery to insert, update, and delete data.
 
-        // ExecuteScalar to return a single value (first column of first row)
-
-        // Improve SQL Security with Stored procedures and parameters
-
         // implement sql helper? https://docs.microsoft.com/en-us/dotnet/api/system.data.sqlclient.sqlcommand?view=dotnet-plat-ext-5.0
 
         // https://www.youtube.com/watch?v=fmvcAzHpsk8 Les Jackson MVC Rest API Course
@@ -361,6 +357,138 @@ namespace Smartfinance_server.Data
                 conn.Open();
 
                 MySqlCommand cmd = new MySqlCommand("DELETE FROM transaction WHERE id = " + id, conn);
+
+                cmd.ExecuteNonQuery();
+                conn.Close();
+            }
+        }
+
+        #endregion
+    
+        #region User
+            
+        public IEnumerable<User> GetAllUsers()
+        {
+            List<User> list = new List<User>();
+
+            using (MySqlConnection conn = DbContext.GetConnection())
+            {
+                conn.Open();
+                MySqlCommand cmd = new MySqlCommand("select * from user", conn);
+
+                using (MySqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        list.Add(new User()
+                        {
+                            Id = Convert.ToInt32(reader["Id"]),
+                            Username = reader["Username"].ToString(),
+                        });
+                    }
+                }
+            }
+            return list;
+        }
+
+        public User GetUser(uint id)
+        {
+
+            User user = new User();
+
+            using (MySqlConnection conn = DbContext.GetConnection())
+            {
+                conn.Open();
+                MySqlCommand cmd = new MySqlCommand("select * from user where id = " + id, conn);
+
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        user = new User(){
+                            Id = Convert.ToInt32(reader["Id"]),
+                            Username = reader["Username"].ToString()
+                        };
+                    }
+                }
+            }
+            return user;
+        }
+
+        public User CreateUser(User user)
+        {
+            using (MySqlConnection conn = DbContext.GetConnection())
+            {
+                conn.Open();
+
+                MySqlCommand cmd = new MySqlCommand("INSERT INTO user (Username) VALUES (@Username)", conn);
+                cmd.Parameters.Add("@Username", MySqlDbType.VarChar).Value = user.Username;
+
+                cmd.ExecuteNonQuery();
+
+                // TODO: this might be an issue when db calls are made async
+                MySqlCommand cmd2 = new MySqlCommand("select * from user where id = LAST_INSERT_ID()", conn);
+
+                using (var reader = cmd2.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        user = new User(){
+                            Id = Convert.ToInt32(reader["Id"]),
+                            Username = reader["Username"].ToString()
+                        };
+                    }
+                }
+                conn.Close();
+            }
+            return user;
+        }
+
+        public object UpdateUser(uint id, Dictionary<string, JsonElement> updates)
+        {
+            using (MySqlConnection conn = DbContext.GetConnection())
+            {
+                conn.Open();
+                
+                StringBuilder sb = new StringBuilder("");
+                MySqlCommand cmd = new MySqlCommand("", conn);
+
+                foreach(KeyValuePair<string, JsonElement> kvp in updates)
+                {
+                    switch (kvp.Key) {
+                        case "description":
+                            sb.Insert(0, kvp.Key + "=@" + kvp.Key + ",");
+                            cmd.Parameters.Add("@" + kvp.Key, MySqlDbType.VarChar).Value = kvp.Value.GetString();
+                            break;
+
+                        // case "currentValue":
+                        // case "currentQuantity":
+                        //     sb.Insert(0, kvp.Key + "=@" + kvp.Key + ",");
+                        //     cmd.Parameters.Add("@" + kvp.Key, MySqlDbType.Decimal).Value = kvp.Value.GetDecimal();
+                        //     break;
+
+                        // case "primaryTransactionId":
+                        //     sb.Insert(0, kvp.Key + "=@" + kvp.Key + ",");
+                        //     cmd.Parameters.Add("@" + kvp.Key, MySqlDbType.UInt16).Value = kvp.Value.GetInt16();
+                        //     break;
+                    }
+                }
+
+                cmd.CommandText = "UPDATE user SET " + sb.ToString().TrimEnd(',') + " WHERE id = " + id;
+
+                cmd.ExecuteNonQuery();
+                conn.Close();
+            }
+            return id;
+        }
+
+        public void DeleteUser(uint id)
+        {
+            using (MySqlConnection conn = DbContext.GetConnection())
+            {
+                conn.Open();
+
+                MySqlCommand cmd = new MySqlCommand("DELETE FROM my WHERE id = " + id, conn);
 
                 cmd.ExecuteNonQuery();
                 conn.Close();

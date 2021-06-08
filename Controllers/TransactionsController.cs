@@ -10,18 +10,18 @@ using System.Text.Json;
 namespace Smartfinance_server.Controllers
 
 {
-    [Route("api/transactions")]
+    [Route("api/transaction")]
     [ApiController]
-    public class TransactionsController : ControllerBase
+    public class TransactionController : ControllerBase
     {
         private readonly QueryEngine _qe;
 
-        public TransactionsController(QueryEngine qe)
+        public TransactionController(QueryEngine qe)
         {
             _qe = qe;
         }
 
-        //GET api/transactions
+        //GET api/transaction
         //get all transactions
         //TODO: limit with skip & take, filter etc. like devextreme params
         [HttpGet]
@@ -29,7 +29,7 @@ namespace Smartfinance_server.Controllers
             return Ok(_qe.GetAllTransactions());
         }
 
-        //GET api/transactions/id
+        //GET api/transaction/id
         //get a specific transaction
         [HttpGet("{id}")]
         public ActionResult<Transaction> GetTransaction(uint id)
@@ -42,7 +42,7 @@ namespace Smartfinance_server.Controllers
             return Ok(transaction);
         }
 
-        //POST api/transactions
+        //POST api/transaction
         //create a transaction in full
         [HttpPost]
         public ActionResult CreateTransaction(Transaction transaction)
@@ -55,7 +55,7 @@ namespace Smartfinance_server.Controllers
             return Ok(newTransaction);
         }
 
-        // PUT api/transactions/id
+        // PUT api/transaction/id
         // update transaction data (excluding id)
         // we are missusing PUT to Update existing transaction instead of PATCH since PATCH requres additional dependencies (jsonpatch) and a different endpoint-style; see https://docs.microsoft.com/en-us/aspnet/core/web-api/jsonpatch?view=aspnetcore-5.0
         [HttpPut("{id}")]
@@ -70,7 +70,7 @@ namespace Smartfinance_server.Controllers
             return NoContent();
         }
 
-        // DELETE api/transactions/id
+        // DELETE api/transaction/id
         // delete a specific transaction
         [HttpDelete("{id}")]
         public ActionResult DeleteTransaction(uint id)

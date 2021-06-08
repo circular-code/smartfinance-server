@@ -3,6 +3,12 @@ using Microsoft.AspNetCore.Mvc;
 using Smartfinance_server.Data;
 using Smartfinance_server.Models;
 using System.Text.Json;
+using Google.Apis.Auth.OAuth2;
+using Google.Apis.Services;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 // https://docs.microsoft.com/en-us/aspnet/core/mvc/controllers/routing
 // https://docs.microsoft.com/en-us/aspnet/core/tutorials/first-web-api?view=aspnetcore-5.0&tabs=visual-studio
@@ -11,27 +17,34 @@ using System.Text.Json;
 namespace Smartfinance_server.Controllers
 
 {
-    [Route("api/assets")]
+    [Route("api/asset")]
     [ApiController]
-    public class AssetsController : ControllerBase
+    public class AssetController : ControllerBase
     {
         private readonly QueryEngine _qe;
 
-        public AssetsController(QueryEngine qe)
+        public AssetController(QueryEngine qe)
         {
             _qe = qe;
         }
 
-        //GET api/assets
+        //GET api/asset
         //get all assets
         //TODO: limit with skip & take, filter etc. like devextreme params
+        [Authorize]
         [HttpGet]
         public ActionResult<IEnumerable<Asset>> GetAllAssets() {
-            return Ok(_qe.GetAllAssets());
+            if (HttpContext.Request.Cookies.TryGetValue("Identity.Cookie", out string cookieValue))
+            {
+                System.Diagnostics.Debug.WriteLine(cookieValue);
+                //new Claim()
+                return Ok(_qe.GetAllAssets());
+            }
+            return BadRequest();
         }
 
-        //GET api/assets/id
-        //get a specific assets
+        //GET api/asset/id
+        //get a specific asset
         [HttpGet("{id}")]
         public ActionResult<Asset> GetAsset(uint id)
         {
@@ -43,7 +56,7 @@ namespace Smartfinance_server.Controllers
             return Ok(asset);
         }
 
-        //POST api/assets
+        //POST api/asset
         //create a asset in full
         [HttpPost]
         public ActionResult CreateAsset(Asset asset)
@@ -56,7 +69,7 @@ namespace Smartfinance_server.Controllers
             return Ok(newAsset);
         }
 
-        // PUT api/assets/id
+        // PUT api/asset/id
         // update asset data (excluding id)
         // we are missusing PUT to Update existing Assets instead of PATCH since PATCH requres additional dependencies (jsonpatch) and a different endpoint-style; see https://docs.microsoft.com/en-us/aspnet/core/web-api/jsonpatch?view=aspnetcore-5.0
         [HttpPut("{id}")]
@@ -71,7 +84,7 @@ namespace Smartfinance_server.Controllers
             return NoContent();
         }
 
-        // DELETE api/assets/id
+        // DELETE api/asset/id
         // delete a specific asset
         [HttpDelete("{id}")]
         public ActionResult DeleteAsset(uint id)
