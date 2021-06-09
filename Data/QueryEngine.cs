@@ -3,6 +3,7 @@ using System.Text;
 using System.Collections.Generic;
 using MySql.Data.MySqlClient;
 using Smartfinance_server.Models;
+using Smartfinance_server.Helpers;
 using System.Text.Json;
 
 namespace Smartfinance_server.Data
@@ -383,7 +384,9 @@ namespace Smartfinance_server.Data
                         list.Add(new User()
                         {
                             Id = Convert.ToInt32(reader["Id"]),
-                            Username = reader["Username"].ToString(),
+                            Email = reader["Email"].ToString(),
+                            Firstname = reader["Firstname"].ToString(),
+                            Lastname = reader["Lastname"].ToString(),
                         });
                     }
                 }
@@ -391,7 +394,7 @@ namespace Smartfinance_server.Data
             return list;
         }
 
-        public User GetUser(uint id)
+        public User GetUserById(uint id)
         {
 
             User user = new User();
@@ -407,7 +410,9 @@ namespace Smartfinance_server.Data
                     {
                         user = new User(){
                             Id = Convert.ToInt32(reader["Id"]),
-                            Username = reader["Username"].ToString()
+                            Email = reader["Email"].ToString(),
+                            Firstname = reader["Firstname"].ToString(),
+                            Lastname = reader["Lastname"].ToString(),
                         };
                     }
                 }
@@ -415,27 +420,62 @@ namespace Smartfinance_server.Data
             return user;
         }
 
+        public User GetUserByEmail(string email)
+        {
+
+            User user = new User();
+
+            using (MySqlConnection conn = DbContext.GetConnection())
+            {
+                conn.Open();
+                MySqlCommand cmd = new MySqlCommand("SELECT * FROM user WHERE Email = \"" + email + "\"", conn);
+
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        user = new User()
+                        {
+                            Id = Convert.ToInt32(reader["Id"]),
+                            Email = reader["Email"].ToString(),
+                            Firstname = reader["Firstname"].ToString(),
+                            Lastname = reader["Lastname"].ToString(),
+                        };
+                    }
+                }
+            }
+            return user;
+        }
+
+        //TODO: implement getUser with hash data for login
+
         public User CreateUser(User user)
         {
             using (MySqlConnection conn = DbContext.GetConnection())
             {
                 conn.Open();
 
-                MySqlCommand cmd = new MySqlCommand("INSERT INTO user (Username) VALUES (@Username)", conn);
-                cmd.Parameters.Add("@Username", MySqlDbType.VarChar).Value = user.Username;
+                MySqlCommand cmd = new MySqlCommand("INSERT INTO user (Email,Firstname,Lastname,PasswordHash,PasswordSalt) VALUES (@Email,@Firstname,@Lastname,@PasswordHash,@PasswordSalt)", conn);
+                cmd.Parameters.Add("@Email", MySqlDbType.VarChar).Value = user.Email;
+                cmd.Parameters.Add("@Firstname", MySqlDbType.VarChar).Value = user.Firstname;
+                cmd.Parameters.Add("@Lastname", MySqlDbType.VarChar).Value = user.Lastname;
+                cmd.Parameters.Add("@PasswordHash", MySqlDbType.Blob).Value = user.PasswordHash;
+                cmd.Parameters.Add("@PasswordSalt", MySqlDbType.Blob).Value = user.PasswordSalt;
 
                 cmd.ExecuteNonQuery();
 
                 // TODO: this might be an issue when db calls are made async
-                MySqlCommand cmd2 = new MySqlCommand("select * from user where id = LAST_INSERT_ID()", conn);
+                MySqlCommand readCmd = new MySqlCommand("select * from user where id = LAST_INSERT_ID()", conn);
 
-                using (var reader = cmd2.ExecuteReader())
+                using (var reader = readCmd.ExecuteReader())
                 {
                     while (reader.Read())
                     {
                         user = new User(){
                             Id = Convert.ToInt32(reader["Id"]),
-                            Username = reader["Username"].ToString()
+                            Email = reader["Email"].ToString(),
+                            Firstname = reader["Firstname"].ToString(),
+                            Lastname = reader["Lastname"].ToString(),
                         };
                     }
                 }
@@ -456,21 +496,20 @@ namespace Smartfinance_server.Data
                 foreach(KeyValuePair<string, JsonElement> kvp in updates)
                 {
                     switch (kvp.Key) {
-                        case "description":
+                        case "email":
+                        case "firstname":
+                        case "lastname":
                             sb.Insert(0, kvp.Key + "=@" + kvp.Key + ",");
                             cmd.Parameters.Add("@" + kvp.Key, MySqlDbType.VarChar).Value = kvp.Value.GetString();
                             break;
 
-                        // case "currentValue":
-                        // case "currentQuantity":
-                        //     sb.Insert(0, kvp.Key + "=@" + kvp.Key + ",");
-                        //     cmd.Parameters.Add("@" + kvp.Key, MySqlDbType.Decimal).Value = kvp.Value.GetDecimal();
-                        //     break;
+                        case "password":
+                            UserHelper.CreatePasswordHash(kvp.Value.GetString(), out byte[] hash, out byte[] salt);
 
-                        // case "primaryTransactionId":
-                        //     sb.Insert(0, kvp.Key + "=@" + kvp.Key + ",");
-                        //     cmd.Parameters.Add("@" + kvp.Key, MySqlDbType.UInt16).Value = kvp.Value.GetInt16();
-                        //     break;
+                            sb.Insert(0, "PasswordHash=@PasswordHash,PasswordSalt=@PasswordSalt,");
+                            cmd.Parameters.Add("@PasswordHash", MySqlDbType.Blob).Value = hash;
+                            cmd.Parameters.Add("@PasswordSalt", MySqlDbType.Blob).Value = salt;
+                            break;
                     }
                 }
 
@@ -488,7 +527,7 @@ namespace Smartfinance_server.Data
             {
                 conn.Open();
 
-                MySqlCommand cmd = new MySqlCommand("DELETE FROM my WHERE id = " + id, conn);
+                MySqlCommand cmd = new MySqlCommand("DELETE FROM user WHERE id = " + id, conn);
 
                 cmd.ExecuteNonQuery();
                 conn.Close();

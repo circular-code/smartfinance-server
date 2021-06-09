@@ -39,7 +39,7 @@ namespace Smartfinance_server
                 .AddCookie("CookieAuth", config =>
                 {
                     config.Cookie.Name = "Identity.Cookie";
-                    config.LoginPath = "/api/auth";
+                    config.LoginPath = "/api/user/login";
                 });
         }
 

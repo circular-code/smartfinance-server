@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Smartfinance_server.Data;
 using Smartfinance_server.Models;
 using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 
 // TODO import (create multiple) Transactions
 // TODO delete multiple ransactions
@@ -24,6 +25,7 @@ namespace Smartfinance_server.Controllers
         //GET api/transaction
         //get all transactions
         //TODO: limit with skip & take, filter etc. like devextreme params
+        [Authorize]
         [HttpGet]
         public ActionResult<IEnumerable<Transaction>> GetAllTransactions() {
             return Ok(_qe.GetAllTransactions());
@@ -31,6 +33,7 @@ namespace Smartfinance_server.Controllers
 
         //GET api/transaction/id
         //get a specific transaction
+        [Authorize]
         [HttpGet("{id}")]
         public ActionResult<Transaction> GetTransaction(uint id)
         {
@@ -44,6 +47,7 @@ namespace Smartfinance_server.Controllers
 
         //POST api/transaction
         //create a transaction in full
+        [Authorize]
         [HttpPost]
         public ActionResult CreateTransaction(Transaction transaction)
         {
@@ -58,6 +62,7 @@ namespace Smartfinance_server.Controllers
         // PUT api/transaction/id
         // update transaction data (excluding id)
         // we are missusing PUT to Update existing transaction instead of PATCH since PATCH requres additional dependencies (jsonpatch) and a different endpoint-style; see https://docs.microsoft.com/en-us/aspnet/core/web-api/jsonpatch?view=aspnetcore-5.0
+        [Authorize]
         [HttpPut("{id}")]
         public ActionResult UpdateTransaction(uint id, [FromBody] Dictionary<string, JsonElement> updates)
         {
@@ -72,6 +77,7 @@ namespace Smartfinance_server.Controllers
 
         // DELETE api/transaction/id
         // delete a specific transaction
+        [Authorize]
         [HttpDelete("{id}")]
         public ActionResult DeleteTransaction(uint id)
         {

@@ -37,7 +37,9 @@ namespace Smartfinance_server.Controllers
             if (HttpContext.Request.Cookies.TryGetValue("Identity.Cookie", out string cookieValue))
             {
                 System.Diagnostics.Debug.WriteLine(cookieValue);
-                //new Claim()
+                // 5. neue Request vom user mit cookie authorisiert und liefert info über user identifikation die in endpunkt verwendet kann, aus dem cookie muss der user irgendwie identifiziert werden können (zurückrechnen des cookies oder so)
+
+                // https://stackoverflow.com/questions/1070411/asp-net-store-user-data-in-auth-cookie?
                 return Ok(_qe.GetAllAssets());
             }
             return BadRequest();
@@ -45,6 +47,7 @@ namespace Smartfinance_server.Controllers
 
         //GET api/asset/id
         //get a specific asset
+        [Authorize]
         [HttpGet("{id}")]
         public ActionResult<Asset> GetAsset(uint id)
         {
@@ -58,6 +61,7 @@ namespace Smartfinance_server.Controllers
 
         //POST api/asset
         //create a asset in full
+        [Authorize]
         [HttpPost]
         public ActionResult CreateAsset(Asset asset)
         {
@@ -72,6 +76,7 @@ namespace Smartfinance_server.Controllers
         // PUT api/asset/id
         // update asset data (excluding id)
         // we are missusing PUT to Update existing Assets instead of PATCH since PATCH requres additional dependencies (jsonpatch) and a different endpoint-style; see https://docs.microsoft.com/en-us/aspnet/core/web-api/jsonpatch?view=aspnetcore-5.0
+        [Authorize]
         [HttpPut("{id}")]
         public ActionResult UpdateAsset(uint id, [FromBody] Dictionary<string, JsonElement> updates)
         {
@@ -86,6 +91,7 @@ namespace Smartfinance_server.Controllers
 
         // DELETE api/asset/id
         // delete a specific asset
+        [Authorize]
         [HttpDelete("{id}")]
         public ActionResult DeleteAsset(uint id)
         {
