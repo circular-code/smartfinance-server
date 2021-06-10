@@ -2,8 +2,8 @@ namespace Smartfinance_server.Models
 {
     public class Liability
     {
-        public string User { get; set; }
-        public int Id { get; set; }
+        public uint Id { get; set; }
+        public uint UserId { get; set; }
         public string CreationDate { get; set; }
         public string ContractDate { get; set; }
         public decimal InitialValue { get; set; }

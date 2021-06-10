@@ -45,13 +45,11 @@ namespace Smartfinance_server.Controllers
             if (string.IsNullOrEmpty(Email) || string.IsNullOrEmpty(Password))
                 return BadRequest();
 
-            User user = _qe.GetUserByEmail(Email);
+            User user = _qe.GetUserWithHashByEmail(Email);
 
             // check if user exists
             if (user == null)
                 return NotFound();
-
-            //TODO: implement getUser with hash data for login
 
             // check if password is correct
             if (!UserHelper.VerifyPasswordHash(Password, user.PasswordHash, user.PasswordSalt))
@@ -152,12 +150,12 @@ namespace Smartfinance_server.Controllers
 
             // validation
             if (string.IsNullOrWhiteSpace(Password))
-                throw new ArgumentException("Password is required");
+                return Problem("Password is required");
 
             User user = _qe.GetUserByEmail(Email);
 
             if (user.Email != null)
-                throw new ArgumentException("Email \"" + Email + "\" is already taken");
+                return Problem("Email \"" + Email + "\" is already taken");
  
             user.Email = Email;
             user.Firstname = Firstname;

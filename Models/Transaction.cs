@@ -2,8 +2,8 @@ namespace Smartfinance_server.Models
 {
     public class Transaction
     {
-        public string User { get; set; }
-        public int Id { get; set; }
+        public uint Id { get; set; }
+        public uint UserId { get; set; }
         public string BookingDate { get; set; }
         public string ValueDate { get; set; }
         public decimal Amount { get; set; }

@@ -38,13 +38,13 @@ namespace Smartfinance_server.Data
                     {
                         list.Add(new Asset()
                         {
-                            User = reader["User"].ToString(),
-                            Id = Convert.ToInt32(reader["Id"]),
+                            UserId = Convert.ToUInt32(reader["UserId"]),
+                            Id = Convert.ToUInt32(reader["Id"]),
                             CreationDate = reader["CreationDate"].ToString(),
                             ContractDate = reader["ContractDate"].ToString(),
                             CurrentValue = Convert.ToDecimal(reader["CurrentValue"]),
                             Currency = reader["Currency"].ToString(),
-                            PrimaryTransactionId = Convert.ToInt32(reader["PrimaryTransactionId"]),
+                            PrimaryTransactionId = Convert.ToUInt32(reader["PrimaryTransactionId"]),
                             Description = reader["Description"].ToString(),
                             Type = reader["Type"].ToString(),
                             CurrentQuantity = Convert.ToDecimal(reader["CurrentQuantity"]),
@@ -72,13 +72,13 @@ namespace Smartfinance_server.Data
                     while (reader.Read())
                     {
                         asset = new Asset(){
-                            User = reader["User"].ToString(),
-                            Id = Convert.ToInt32(reader["Id"]),
+                            UserId = Convert.ToUInt32(reader["UserId"]),
+                            Id = Convert.ToUInt32(reader["Id"]),
                             CreationDate = reader["CreationDate"].ToString(),
                             ContractDate = reader["ContractDate"].ToString(),
                             CurrentValue = Convert.ToDecimal(reader["CurrentValue"]),
                             Currency = reader["Currency"].ToString(),
-                            PrimaryTransactionId = Convert.ToInt32(reader["PrimaryTransactionId"]),
+                            PrimaryTransactionId = Convert.ToUInt32(reader["PrimaryTransactionId"]),
                             Description = reader["Description"].ToString(),
                             Type = reader["Type"].ToString(),
                             CurrentQuantity = Convert.ToDecimal(reader["CurrentQuantity"]),
@@ -97,13 +97,13 @@ namespace Smartfinance_server.Data
             {
                 conn.Open();
 
-                MySqlCommand cmd = new MySqlCommand("INSERT INTO asset (User,CreationDate,ContractDate,CurrentValue,Currency,PrimaryTransactionId,Description,Type,CurrentQuantity,LiabilityIds,TransactionIds) VALUES (@User,@CreationDate,@ContractDate,@CurrentValue,@Currency,@PrimaryTransactionId,@Description,@Type,@CurrentQuantity,@LiabilityIds,@TransactionIds)", conn);
-                cmd.Parameters.Add("@User",                 MySqlDbType.VarChar).Value = asset.User;
+                MySqlCommand cmd = new MySqlCommand("INSERT INTO asset (UserId,CreationDate,ContractDate,CurrentValue,Currency,PrimaryTransactionId,Description,Type,CurrentQuantity,LiabilityIds,TransactionIds) VALUES (@UserId,@CreationDate,@ContractDate,@CurrentValue,@Currency,@PrimaryTransactionId,@Description,@Type,@CurrentQuantity,@LiabilityIds,@TransactionIds)", conn);
+                cmd.Parameters.Add("@UserId",               MySqlDbType.VarChar).Value = asset.UserId;
                 cmd.Parameters.Add("@CreationDate",         MySqlDbType.VarChar).Value = asset.CreationDate;
                 cmd.Parameters.Add("@ContractDate",         MySqlDbType.VarChar).Value = asset.ContractDate;
                 cmd.Parameters.Add("@CurrentValue",         MySqlDbType.Decimal).Value = asset.CurrentValue;
                 cmd.Parameters.Add("@Currency",             MySqlDbType.VarChar).Value = asset.Currency;
-                cmd.Parameters.Add("@PrimaryTransactionId", MySqlDbType.UInt16 ).Value = asset.PrimaryTransactionId;
+                cmd.Parameters.Add("@PrimaryTransactionId", MySqlDbType.UInt32 ).Value = asset.PrimaryTransactionId;
                 cmd.Parameters.Add("@Description",          MySqlDbType.VarChar).Value = asset.Description;
                 cmd.Parameters.Add("@Type",                 MySqlDbType.VarChar).Value = asset.Type;
                 cmd.Parameters.Add("@CurrentQuantity",      MySqlDbType.Decimal).Value = asset.CurrentQuantity;
@@ -120,13 +120,13 @@ namespace Smartfinance_server.Data
                     while (reader.Read())
                     {
                         asset = new Asset(){
-                            User = reader["User"].ToString(),
-                            Id = Convert.ToInt32(reader["Id"]),
+                            UserId = Convert.ToUInt32(reader["UserId"]),
+                            Id = Convert.ToUInt32(reader["Id"]),
                             CreationDate = reader["CreationDate"].ToString(),
                             ContractDate = reader["ContractDate"].ToString(),
                             CurrentValue = Convert.ToDecimal(reader["CurrentValue"]),
                             Currency = reader["Currency"].ToString(),
-                            PrimaryTransactionId = Convert.ToInt32(reader["PrimaryTransactionId"]),
+                            PrimaryTransactionId = Convert.ToUInt32(reader["PrimaryTransactionId"]),
                             Description = reader["Description"].ToString(),
                             Type = reader["Type"].ToString(),
                             CurrentQuantity = Convert.ToDecimal(reader["CurrentQuantity"]),
@@ -152,7 +152,6 @@ namespace Smartfinance_server.Data
                 foreach(KeyValuePair<string, JsonElement> kvp in updates)
                 {
                     switch (kvp.Key) {
-                        case "user":
                         case "creationDate":
                         case "contractDate":
                         case "currency":
@@ -170,9 +169,10 @@ namespace Smartfinance_server.Data
                             cmd.Parameters.Add("@" + kvp.Key, MySqlDbType.Decimal).Value = kvp.Value.GetDecimal();
                             break;
 
+                        case "userId":
                         case "primaryTransactionId":
                             sb.Insert(0, kvp.Key + "=@" + kvp.Key + ",");
-                            cmd.Parameters.Add("@" + kvp.Key, MySqlDbType.UInt16).Value = kvp.Value.GetInt16();
+                            cmd.Parameters.Add("@" + kvp.Key, MySqlDbType.UInt32).Value = kvp.Value.GetUInt32();
                             break;
                     }
                 }
@@ -217,8 +217,8 @@ namespace Smartfinance_server.Data
                     {
                         list.Add(new Transaction()
                         {
-                            User = reader["User"].ToString(),
-                            Id = Convert.ToInt32(reader["Id"]),
+                            UserId = Convert.ToUInt32(reader["UserId"]),
+                            Id = Convert.ToUInt32(reader["Id"]),
                             BookingDate = reader["BookingDate"].ToString(),
                             ValueDate = reader["ValueDate"].ToString(),
                             Amount = Convert.ToDecimal(reader["Amount"]),
@@ -248,8 +248,8 @@ namespace Smartfinance_server.Data
                     while (reader.Read())
                     {
                         transaction = new Transaction(){
-                            User = reader["User"].ToString(),
-                            Id = Convert.ToInt32(reader["Id"]),
+                            UserId = Convert.ToUInt32(reader["UserId"]),
+                            Id = Convert.ToUInt32(reader["Id"]),
                             BookingDate = reader["BookingDate"].ToString(),
                             ValueDate = reader["ValueDate"].ToString(),
                             Amount = Convert.ToDecimal(reader["Amount"]),
@@ -271,8 +271,8 @@ namespace Smartfinance_server.Data
             {
                 conn.Open();
 
-                MySqlCommand cmd = new MySqlCommand("INSERT INTO transaction (User,BookingDate,ValueDate,Amount,Currency,Description,Type,Saldo,Counterparty) VALUES (@User,@BookingDate,@ValueDate,@Amount,@Currency,@Description,@Type,@Saldo,@Counterparty)", conn);
-                cmd.Parameters.Add("@User",                 MySqlDbType.VarChar).Value = transaction.User;
+                MySqlCommand cmd = new MySqlCommand("INSERT INTO transaction (UserId,BookingDate,ValueDate,Amount,Currency,Description,Type,Saldo,Counterparty) VALUES (@UserId,@BookingDate,@ValueDate,@Amount,@Currency,@Description,@Type,@Saldo,@Counterparty)", conn);
+                cmd.Parameters.Add("@UserId",               MySqlDbType.UInt32).Value = transaction.UserId;
                 cmd.Parameters.Add("@BookingDate",          MySqlDbType.VarChar).Value = transaction.BookingDate;
                 cmd.Parameters.Add("@ValueDate",            MySqlDbType.VarChar).Value = transaction.ValueDate;
                 cmd.Parameters.Add("@Amount",               MySqlDbType.Decimal).Value = transaction.Amount;
@@ -292,8 +292,8 @@ namespace Smartfinance_server.Data
                     while (reader.Read())
                     {
                         transaction = new Transaction(){
-                            User = reader["User"].ToString(),
-                            Id = Convert.ToInt32(reader["Id"]),
+                            UserId = Convert.ToUInt32(reader["UserId"]),
+                            Id = Convert.ToUInt32(reader["Id"]),
                             BookingDate = reader["BookingDate"].ToString(),
                             ValueDate = reader["ValueDate"].ToString(),
                             Amount = Convert.ToDecimal(reader["Amount"]),
@@ -324,7 +324,6 @@ namespace Smartfinance_server.Data
                 {
                     switch (kvp.Key) {
 
-                        // case "user":
                         case "bookingDate":
                         case "valueDate":
                         case "currency":
@@ -339,6 +338,11 @@ namespace Smartfinance_server.Data
                         case "saldo":
                             sb.Insert(0, kvp.Key + "=@" + kvp.Key + ",");
                             cmd.Parameters.Add("@" + kvp.Key, MySqlDbType.Decimal).Value = kvp.Value.GetDecimal();
+                            break;
+
+                        case "userId":
+                            sb.Insert(0, kvp.Key + "=@" + kvp.Key + ",");
+                            cmd.Parameters.Add("@" + kvp.Key, MySqlDbType.UInt32).Value = kvp.Value.GetInt32();
                             break;
                     }
                 }
@@ -383,7 +387,7 @@ namespace Smartfinance_server.Data
                     {
                         list.Add(new User()
                         {
-                            Id = Convert.ToInt32(reader["Id"]),
+                            Id = Convert.ToUInt32(reader["Id"]),
                             Email = reader["Email"].ToString(),
                             Firstname = reader["Firstname"].ToString(),
                             Lastname = reader["Lastname"].ToString(),
@@ -409,7 +413,7 @@ namespace Smartfinance_server.Data
                     while (reader.Read())
                     {
                         user = new User(){
-                            Id = Convert.ToInt32(reader["Id"]),
+                            Id = Convert.ToUInt32(reader["Id"]),
                             Email = reader["Email"].ToString(),
                             Firstname = reader["Firstname"].ToString(),
                             Lastname = reader["Lastname"].ToString(),
@@ -422,7 +426,6 @@ namespace Smartfinance_server.Data
 
         public User GetUserByEmail(string email)
         {
-
             User user = new User();
 
             using (MySqlConnection conn = DbContext.GetConnection())
@@ -436,7 +439,7 @@ namespace Smartfinance_server.Data
                     {
                         user = new User()
                         {
-                            Id = Convert.ToInt32(reader["Id"]),
+                            Id = Convert.ToUInt32(reader["Id"]),
                             Email = reader["Email"].ToString(),
                             Firstname = reader["Firstname"].ToString(),
                             Lastname = reader["Lastname"].ToString(),
@@ -447,7 +450,33 @@ namespace Smartfinance_server.Data
             return user;
         }
 
-        //TODO: implement getUser with hash data for login
+        public User GetUserWithHashByEmail(string email)
+        {
+            User user = new User();
+
+            using (MySqlConnection conn = DbContext.GetConnection())
+            {
+                conn.Open();
+                MySqlCommand cmd = new MySqlCommand("SELECT * FROM user WHERE Email = \"" + email + "\"", conn);
+
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        user = new User()
+                        {
+                            Id = Convert.ToUInt32(reader["Id"]),
+                            Email = reader["Email"].ToString(),
+                            Firstname = reader["Firstname"].ToString(),
+                            Lastname = reader["Lastname"].ToString(),
+                            PasswordHash = (byte[])reader["PasswordHash"],
+                            PasswordSalt = (byte[])reader["PasswordSalt"],
+                        };
+                    }
+                }
+            }
+            return user;
+        }
 
         public User CreateUser(User user)
         {
@@ -472,7 +501,7 @@ namespace Smartfinance_server.Data
                     while (reader.Read())
                     {
                         user = new User(){
-                            Id = Convert.ToInt32(reader["Id"]),
+                            Id = Convert.ToUInt32(reader["Id"]),
                             Email = reader["Email"].ToString(),
                             Firstname = reader["Firstname"].ToString(),
                             Lastname = reader["Lastname"].ToString(),

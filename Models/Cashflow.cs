@@ -2,6 +2,7 @@ namespace Smartfinance_server.Models
 {
     public class Cashflow
     {
+        public uint UserId { get; set; }
         public string ReferenceId { get; set; }
         public string ReferenceType { get; set; }
         public string Date { get; set; }
