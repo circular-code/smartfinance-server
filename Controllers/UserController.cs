@@ -43,7 +43,7 @@ namespace Smartfinance_server.Controllers
                     Password = kvp.Value.GetString();
 
             if (string.IsNullOrEmpty(Email) || string.IsNullOrEmpty(Password))
-                return BadRequest();
+                return BadRequest("No Email or password given");
 
             User user = _qe.GetUserWithHashByEmail(Email);
 
@@ -53,24 +53,31 @@ namespace Smartfinance_server.Controllers
 
             // check if password is correct
             if (!UserHelper.VerifyPasswordHash(Password, user.PasswordHash, user.PasswordSalt))
-                return BadRequest();
+                return BadRequest("Wrong password");
 
             //authentication successful
 
-            // 4. ClaimsPrincipal erstellen anhand von userdaten
-
             List<Claim> ids = new List<Claim>()
             {
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Email, Email),
+                new Claim(ClaimTypes.Name, user.Lastname),
+                new Claim(ClaimTypes.GivenName, user.Firstname)
             };
 
-            ClaimsIdentity identity = new ClaimsIdentity(ids, "BasicDataIdentity");
+            await HttpContext.SignInAsync("CookieAuth",
+                new ClaimsPrincipal(new ClaimsIdentity(ids, "CookieAuth")),
+                new AuthenticationProperties
+                {
+                    AllowRefresh = true,
+                    ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(10),
+                    IsPersistent = true,
+                    IssuedUtc = DateTimeOffset.UtcNow,
+                    RedirectUri = "/"
+                }
+            );
 
-            var userPrincipal = new ClaimsPrincipal(new[] { identity });
-
-            await HttpContext.SignInAsync(userPrincipal);
-
-            return Ok();
+            return Ok(user);
 
             //TODO: recieve GOOGLE ID TOKEN
 
@@ -102,6 +109,14 @@ namespace Smartfinance_server.Controllers
             //     LastName = user.LastName,
             //     // Token = tokenString
             // });
+        }
+
+        [Authorize]
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync("CookieAuth");
+            return Ok();
         }
 
         //GET api/user

@@ -1,13 +1,29 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using Smartfinance_server.Data;
 using Smartfinance_server.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace Smartfinance_server.Helpers {
 
     public class UserHelper
     {
+        public static bool TryGetUserIdFromCookie(ClaimsPrincipal user, out uint userId)
+        {
+            userId = 0;
+
+            string userString = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrWhiteSpace(userString))
+                return false;
+
+            userId = Convert.ToUInt32(userString);
+
+            return true;
+        }
+
         public static void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
         {
             if (password == null) throw new ArgumentNullException("password");

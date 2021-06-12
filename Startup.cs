@@ -4,14 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
-using Google.Apis.Auth.AspNetCore3;
 using Smartfinance_server.Data;
-using Smartfinance_server.Models;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Smartfinance_server
 {
@@ -28,6 +21,7 @@ namespace Smartfinance_server
         {
             services.AddControllers();
             services.AddScoped<QueryEngine>();
+            services.AddHttpContextAccessor();
             services.Add(new ServiceDescriptor(typeof(DbContext), new DbContext(Configuration.GetConnectionString("DefaultConnection"))));
 
             services.AddSwaggerGen(c =>

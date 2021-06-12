@@ -4,6 +4,7 @@ using Smartfinance_server.Data;
 using Smartfinance_server.Models;
 using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
+using Smartfinance_server.Helpers;
 
 // TODO import (create multiple) Transactions
 // TODO delete multiple ransactions
@@ -28,7 +29,11 @@ namespace Smartfinance_server.Controllers
         [Authorize]
         [HttpGet]
         public ActionResult<IEnumerable<Transaction>> GetAllTransactions() {
-            return Ok(_qe.GetAllTransactions());
+
+            if (!UserHelper.TryGetUserIdFromCookie(HttpContext.User, out uint userId))
+                return Problem("Could not find userId in cookie");
+
+            return Ok(_qe.GetAllTransactions(userId));
         }
 
         //GET api/transaction/id
@@ -37,7 +42,10 @@ namespace Smartfinance_server.Controllers
         [HttpGet("{id}")]
         public ActionResult<Transaction> GetTransaction(uint id)
         {
-            var transaction = _qe.GetTransaction(id);
+            if (!UserHelper.TryGetUserIdFromCookie(HttpContext.User, out uint userId))
+                return Problem("Could not find userId in cookie");
+
+            var transaction = _qe.GetTransaction(id, userId);
 
             if (transaction == null)
                 return NotFound();
@@ -51,7 +59,10 @@ namespace Smartfinance_server.Controllers
         [HttpPost]
         public ActionResult CreateTransaction(Transaction transaction)
         {
-            var newTransaction = _qe.CreateTransaction(transaction);
+            if (!UserHelper.TryGetUserIdFromCookie(HttpContext.User, out uint userId))
+                return Problem("Could not find userId in cookie");
+
+            var newTransaction = _qe.CreateTransaction(transaction, userId);
 
             if (newTransaction == null)
                 return NotFound();
@@ -66,12 +77,15 @@ namespace Smartfinance_server.Controllers
         [HttpPut("{id}")]
         public ActionResult UpdateTransaction(uint id, [FromBody] Dictionary<string, JsonElement> updates)
         {
-            var transaction = _qe.GetTransaction(id);
+            if (!UserHelper.TryGetUserIdFromCookie(HttpContext.User, out uint userId))
+                return Problem("Could not find userId in cookie");
+
+            var transaction = _qe.GetTransaction(id, userId);
 
             if (transaction == null)
                 return NotFound();
 
-            _qe.UpdateTransaction(id, updates);
+            _qe.UpdateTransaction(id, userId, updates);
             return NoContent();
         }
 
@@ -81,12 +95,15 @@ namespace Smartfinance_server.Controllers
         [HttpDelete("{id}")]
         public ActionResult DeleteTransaction(uint id)
         {
-            var transaction = _qe.GetTransaction(id);
+            if (!UserHelper.TryGetUserIdFromCookie(HttpContext.User, out uint userId))
+                return Problem("Could not find userId in cookie");
+
+            var transaction = _qe.GetTransaction(id, userId);
 
             if (transaction == null)
                 return NotFound();
 
-            _qe.DeleteTransaction(id);
+            _qe.DeleteTransaction(id, userId);
             return NoContent();
         }
     }

@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using System;
+using Smartfinance_server.Helpers;
 
 // https://docs.microsoft.com/en-us/aspnet/core/mvc/controllers/routing
 // https://docs.microsoft.com/en-us/aspnet/core/tutorials/first-web-api?view=aspnetcore-5.0&tabs=visual-studio
@@ -36,11 +38,12 @@ namespace Smartfinance_server.Controllers
         public ActionResult<IEnumerable<Asset>> GetAllAssets() {
             if (HttpContext.Request.Cookies.TryGetValue("Identity.Cookie", out string cookieValue))
             {
-                System.Diagnostics.Debug.WriteLine(cookieValue);
-                // 5. neue Request vom user mit cookie authorisiert und liefert info über user identifikation die in endpunkt verwendet kann, aus dem cookie muss der user irgendwie identifiziert werden können (zurückrechnen des cookies oder so)
+                //System.Diagnostics.Debug.WriteLine(cookieValue);
 
-                // https://stackoverflow.com/questions/1070411/asp-net-store-user-data-in-auth-cookie?
-                return Ok(_qe.GetAllAssets());
+                if (!UserHelper.TryGetUserIdFromCookie(HttpContext.User, out uint userId))
+                    return Problem("Could not find userId in cookie");
+
+                return Ok(_qe.GetAllAssets(userId));
             }
             return BadRequest();
         }
@@ -51,7 +54,10 @@ namespace Smartfinance_server.Controllers
         [HttpGet("{id}")]
         public ActionResult<Asset> GetAsset(uint id)
         {
-            var asset = _qe.GetAsset(id);
+            if (!UserHelper.TryGetUserIdFromCookie(HttpContext.User, out uint userId))
+                return Problem("Could not find userId in cookie");
+
+            var asset = _qe.GetAsset(id, userId);
 
             if (asset == null)
                 return NotFound();
@@ -65,7 +71,10 @@ namespace Smartfinance_server.Controllers
         [HttpPost]
         public ActionResult CreateAsset(Asset asset)
         {
-            var newAsset = _qe.CreateAsset(asset);
+            if (!UserHelper.TryGetUserIdFromCookie(HttpContext.User, out uint userId))
+                return Problem("Could not find userId in cookie");
+
+            var newAsset = _qe.CreateAsset(asset, userId);
 
             if (newAsset == null)
                 return NotFound();
@@ -80,12 +89,15 @@ namespace Smartfinance_server.Controllers
         [HttpPut("{id}")]
         public ActionResult UpdateAsset(uint id, [FromBody] Dictionary<string, JsonElement> updates)
         {
-            var asset = _qe.GetAsset(id);
+            if (!UserHelper.TryGetUserIdFromCookie(HttpContext.User, out uint userId))
+                return Problem("Could not find userId in cookie");
+
+            var asset = _qe.GetAsset(id, userId);
 
             if (asset == null)
                 return NotFound();
 
-            _qe.UpdateAsset(id, updates);
+            _qe.UpdateAsset(id, userId, updates);
             return NoContent();
         }
 
@@ -95,12 +107,15 @@ namespace Smartfinance_server.Controllers
         [HttpDelete("{id}")]
         public ActionResult DeleteAsset(uint id)
         {
-            var asset = _qe.GetAsset(id);
+            if (!UserHelper.TryGetUserIdFromCookie(HttpContext.User, out uint userId))
+                return Problem("Could not find userId in cookie");
+
+            var asset = _qe.GetAsset(id, userId);
 
             if (asset == null)
                 return NotFound();
 
-            _qe.DeleteAsset(id);
+            _qe.DeleteAsset(id, userId);
             return NoContent();
         }
     }

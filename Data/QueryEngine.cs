@@ -23,14 +23,14 @@ namespace Smartfinance_server.Data
 
         #region Asset
             
-        public IEnumerable<Asset> GetAllAssets()
+        public IEnumerable<Asset> GetAllAssets(uint userId)
         {
             List<Asset> list = new List<Asset>();
 
             using (MySqlConnection conn = DbContext.GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("select * from asset", conn);
+                MySqlCommand cmd = new MySqlCommand("SELECT * FROM asset WHERE UserId = " + userId.ToString(), conn);
 
                 using (MySqlDataReader reader = cmd.ExecuteReader())
                 {
@@ -57,15 +57,15 @@ namespace Smartfinance_server.Data
             return list;
         }
 
-        public Asset GetAsset(uint id)
+        public Asset GetAsset(uint id, uint userId)
         {
 
-            Asset asset = new Asset();
+            Asset? asset = null;
 
             using (MySqlConnection conn = DbContext.GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("select * from asset where id = " + id, conn);
+                MySqlCommand cmd = new MySqlCommand("SELECT * FROM asset WHERE Id = " + id + " AND UserId = " + userId.ToString(), conn);
 
                 using (var reader = cmd.ExecuteReader())
                 {
@@ -91,14 +91,14 @@ namespace Smartfinance_server.Data
             return asset;
         }
 
-        public Asset CreateAsset(Asset asset)
+        public Asset CreateAsset(Asset asset, uint userId)
         {
             using (MySqlConnection conn = DbContext.GetConnection())
             {
                 conn.Open();
 
                 MySqlCommand cmd = new MySqlCommand("INSERT INTO asset (UserId,CreationDate,ContractDate,CurrentValue,Currency,PrimaryTransactionId,Description,Type,CurrentQuantity,LiabilityIds,TransactionIds) VALUES (@UserId,@CreationDate,@ContractDate,@CurrentValue,@Currency,@PrimaryTransactionId,@Description,@Type,@CurrentQuantity,@LiabilityIds,@TransactionIds)", conn);
-                cmd.Parameters.Add("@UserId",               MySqlDbType.VarChar).Value = asset.UserId;
+                cmd.Parameters.Add("@UserId",               MySqlDbType.UInt32).Value = userId;
                 cmd.Parameters.Add("@CreationDate",         MySqlDbType.VarChar).Value = asset.CreationDate;
                 cmd.Parameters.Add("@ContractDate",         MySqlDbType.VarChar).Value = asset.ContractDate;
                 cmd.Parameters.Add("@CurrentValue",         MySqlDbType.Decimal).Value = asset.CurrentValue;
@@ -140,7 +140,7 @@ namespace Smartfinance_server.Data
             return asset;
         }
 
-        public object UpdateAsset(uint id, Dictionary<string, JsonElement> updates)
+        public object UpdateAsset(uint id, uint userId, Dictionary<string, JsonElement> updates)
         {
             using (MySqlConnection conn = DbContext.GetConnection())
             {
@@ -177,7 +177,7 @@ namespace Smartfinance_server.Data
                     }
                 }
 
-                cmd.CommandText = "UPDATE asset SET " + sb.ToString().TrimEnd(',') + " WHERE id = " + id;
+                cmd.CommandText = "UPDATE asset SET " + sb.ToString().TrimEnd(',') + " WHERE id = " + id + " AND UserId = " + userId.ToString();
 
                 cmd.ExecuteNonQuery();
                 conn.Close();
@@ -185,13 +185,13 @@ namespace Smartfinance_server.Data
             return id;
         }
 
-        public void DeleteAsset(uint id)
+        public void DeleteAsset(uint id, uint userId)
         {
             using (MySqlConnection conn = DbContext.GetConnection())
             {
                 conn.Open();
 
-                MySqlCommand cmd = new MySqlCommand("DELETE FROM asset WHERE id = " + id, conn);
+                MySqlCommand cmd = new MySqlCommand("DELETE FROM asset WHERE id = " + id + " AND UserId = " + userId.ToString(), conn);
 
                 cmd.ExecuteNonQuery();
                 conn.Close();
@@ -202,14 +202,14 @@ namespace Smartfinance_server.Data
 
         #region Transaction
             
-        public IEnumerable<Transaction> GetAllTransactions()
+        public IEnumerable<Transaction> GetAllTransactions(uint userId)
         {
             List<Transaction> list = new List<Transaction>();
 
             using (MySqlConnection conn = DbContext.GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("select * from transaction", conn);
+                MySqlCommand cmd = new MySqlCommand("SELECT * FROM transaction WHERE UserId = " + userId.ToString(), conn);
 
                 using (MySqlDataReader reader = cmd.ExecuteReader())
                 {
@@ -234,14 +234,14 @@ namespace Smartfinance_server.Data
             return list;
         }
 
-        public Transaction GetTransaction(uint id)
+        public Transaction GetTransaction(uint id, uint userId)
         {
             Transaction transaction = new Transaction();
 
             using (MySqlConnection conn = DbContext.GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("select * from transaction where id = " + id, conn);
+                MySqlCommand cmd = new MySqlCommand("SELECT * FROM transaction WHERE Id = " + id + " AND UserId = " + userId.ToString(), conn);
 
                 using (var reader = cmd.ExecuteReader())
                 {
@@ -265,14 +265,14 @@ namespace Smartfinance_server.Data
             return transaction;
         }
 
-        public Transaction CreateTransaction(Transaction transaction)
+        public Transaction CreateTransaction(Transaction transaction, uint userId)
         {
             using (MySqlConnection conn = DbContext.GetConnection())
             {
                 conn.Open();
 
                 MySqlCommand cmd = new MySqlCommand("INSERT INTO transaction (UserId,BookingDate,ValueDate,Amount,Currency,Description,Type,Saldo,Counterparty) VALUES (@UserId,@BookingDate,@ValueDate,@Amount,@Currency,@Description,@Type,@Saldo,@Counterparty)", conn);
-                cmd.Parameters.Add("@UserId",               MySqlDbType.UInt32).Value = transaction.UserId;
+                cmd.Parameters.Add("@UserId",               MySqlDbType.UInt32).Value = userId;
                 cmd.Parameters.Add("@BookingDate",          MySqlDbType.VarChar).Value = transaction.BookingDate;
                 cmd.Parameters.Add("@ValueDate",            MySqlDbType.VarChar).Value = transaction.ValueDate;
                 cmd.Parameters.Add("@Amount",               MySqlDbType.Decimal).Value = transaction.Amount;
@@ -311,7 +311,7 @@ namespace Smartfinance_server.Data
             return transaction;
         }
 
-        public object UpdateTransaction(uint id, Dictionary<string, JsonElement> updates)
+        public object UpdateTransaction(uint id, uint userId, Dictionary<string, JsonElement> updates)
         {
             using (MySqlConnection conn = DbContext.GetConnection())
             {
@@ -347,7 +347,7 @@ namespace Smartfinance_server.Data
                     }
                 }
 
-                cmd.CommandText = "UPDATE transaction SET " + sb.ToString().TrimEnd(',') + " WHERE id = " + id;
+                cmd.CommandText = "UPDATE transaction SET " + sb.ToString().TrimEnd(',') + " WHERE Id = " + id + " AND UserId = " + userId.ToString();
 
                 cmd.ExecuteNonQuery();
                 conn.Close();
@@ -355,13 +355,13 @@ namespace Smartfinance_server.Data
             return id;
         }
 
-        public void DeleteTransaction(uint id)
+        public void DeleteTransaction(uint id, uint userId)
         {
             using (MySqlConnection conn = DbContext.GetConnection())
             {
                 conn.Open();
 
-                MySqlCommand cmd = new MySqlCommand("DELETE FROM transaction WHERE id = " + id, conn);
+                MySqlCommand cmd = new MySqlCommand("DELETE FROM transaction WHERE Id = " + id + " AND UserId = " + userId.ToString(), conn);
 
                 cmd.ExecuteNonQuery();
                 conn.Close();
