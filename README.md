@@ -21,6 +21,7 @@ docker network ls
 
 //enter docker container (in this case db)
 docker exec -it dev-mysql mysql
+docker exec -it dev-mysql bash
 
 /////////////////////////////
 release new version of server
