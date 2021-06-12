@@ -77,6 +77,9 @@ namespace Smartfinance_server.Controllers
                 }
             );
 
+            user.PasswordHash = null;
+            user.PasswordSalt = null;
+
             return Ok(user);
 
             //TODO: recieve GOOGLE ID TOKEN
