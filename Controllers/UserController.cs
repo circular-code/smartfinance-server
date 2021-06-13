@@ -122,6 +122,21 @@ namespace Smartfinance_server.Controllers
             return Ok();
         }
 
+        [AllowAnonymous]
+        [HttpGet("isLoggedIn")]
+        public ActionResult<User> IsLoggedIn()
+        {
+            if (!UserHelper.TryGetUserIdFromCookie(HttpContext.User, out uint userId))
+                return Problem("User is not logged in.");
+
+            var user = _qe.GetUserById(userId);
+
+            if (user == null)
+                return NotFound();
+
+            return Ok(user);
+        }
+
         //GET api/user
         //get all users
         //TODO: limit with skip & take, filter etc. like devextreme params
