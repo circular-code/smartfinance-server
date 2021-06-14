@@ -127,7 +127,7 @@ namespace Smartfinance_server.Controllers
         public ActionResult<User> IsLoggedIn()
         {
             if (!UserHelper.TryGetUserIdFromCookie(HttpContext.User, out uint userId))
-                return Problem("User is not logged in.");
+                return Ok("User is not logged in.");
 
             var user = _qe.GetUserById(userId);
 
