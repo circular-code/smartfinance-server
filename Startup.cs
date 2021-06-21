@@ -41,7 +41,11 @@ namespace Smartfinance_server
         {
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                //if (env.IsDevelopment())
+                //    app.UseDeveloperExceptionPage();
+                //else
+                    app.UseExceptionHandler("/error");
+
                 app.UseSwagger();
                 app.UseSwaggerUI(c =>
                 {

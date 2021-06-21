@@ -16,6 +16,9 @@ using Smartfinance_server.Helpers;
 // https://docs.microsoft.com/en-us/aspnet/core/tutorials/first-web-api?view=aspnetcore-5.0&tabs=visual-studio
 // https://docs.microsoft.com/en-us/dotnet/api/system.web.http.apicontroller?view=aspnetcore-2.2
 
+
+//TODO: logging
+
 namespace Smartfinance_server.Controllers
 
 {
@@ -39,6 +42,8 @@ namespace Smartfinance_server.Controllers
             if (HttpContext.Request.Cookies.TryGetValue("Identity.Cookie", out string cookieValue))
             {
                 //System.Diagnostics.Debug.WriteLine(cookieValue);
+
+                throw new Exception();
 
                 if (!UserHelper.TryGetUserIdFromCookie(HttpContext.User, out uint userId))
                     return Problem("Could not find userId in cookie");
