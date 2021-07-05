@@ -43,7 +43,7 @@ namespace Smartfinance_server.Controllers
             {
                 //System.Diagnostics.Debug.WriteLine(cookieValue);
 
-                throw new Exception();
+                //throw new Exception();
 
                 if (!UserHelper.TryGetUserIdFromCookie(HttpContext.User, out uint userId))
                     return Problem("Could not find userId in cookie");
