@@ -57,16 +57,13 @@ namespace Smartfinance_server.Controllers
         //create a transaction in full
         [Authorize]
         [HttpPost]
-        public ActionResult CreateTransaction(Transaction transaction)
+        public ActionResult CreateTransaction(List<Transaction>transactions)
         {
             if (!UserHelper.TryGetUserIdFromCookie(HttpContext.User, out uint userId))
                 return Problem("Could not find userId in cookie");
 
-            var newTransaction = _qe.CreateTransaction(transaction, userId);
+            var newTransaction = _qe.CreateTransaction(transactions, userId);
 
-            if (newTransaction == null)
-                return NotFound();
-                
             return Ok(newTransaction);
         }
 

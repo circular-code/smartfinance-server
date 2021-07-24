@@ -265,44 +265,60 @@ namespace Smartfinance_server.Data
             return transaction;
         }
 
-        public Transaction CreateTransaction(Transaction transaction, uint userId)
+        public Transaction CreateTransaction(List<Transaction> transactions, uint userId)
         {
+
+            Transaction transaction = null;
             using (MySqlConnection conn = DbContext.GetConnection())
             {
                 conn.Open();
 
-                MySqlCommand cmd = new MySqlCommand("INSERT INTO transaction (UserId,BookingDate,ValueDate,Amount,Currency,Description,Type,Saldo,Counterparty) VALUES (@UserId,@BookingDate,@ValueDate,@Amount,@Currency,@Description,@Type,@Saldo,@Counterparty)", conn);
-                cmd.Parameters.Add("@UserId",               MySqlDbType.UInt32).Value = userId;
-                cmd.Parameters.Add("@BookingDate",          MySqlDbType.VarChar).Value = transaction.BookingDate;
-                cmd.Parameters.Add("@ValueDate",            MySqlDbType.VarChar).Value = transaction.ValueDate;
-                cmd.Parameters.Add("@Amount",               MySqlDbType.Decimal).Value = transaction.Amount;
-                cmd.Parameters.Add("@Currency",             MySqlDbType.VarChar).Value = transaction.Currency;
-                cmd.Parameters.Add("@Description",          MySqlDbType.VarChar).Value = transaction.Description;
-                cmd.Parameters.Add("@Type",                 MySqlDbType.VarChar).Value = transaction.Type;
-                cmd.Parameters.Add("@Saldo",                MySqlDbType.Decimal).Value = transaction.Saldo;
-                cmd.Parameters.Add("@Counterparty",         MySqlDbType.VarChar).Value = transaction.Counterparty;
+                //(@UserId, @BookingDate, @ValueDate, @Amount, @Currency, @Description, @Type, @Saldo, @Counterparty)
 
+                MySqlCommand cmd = new MySqlCommand("", conn);
+                string cmdString = "INSERT INTO transaction (UserId,BookingDate,ValueDate,Amount,Currency,Description,Type,Saldo,Counterparty) VALUES ";
+                int counter = 0;
+
+                foreach (Transaction t in transactions)
+                {
+                    cmdString += "(@UserId" + counter + ", @BookingDate" + counter + ", @ValueDate" + counter + ", @Amount" + counter + ", @Currency" + counter + ", @Description" + counter + ", @Type" + counter + ", @Saldo" + counter + ", @Counterparty" + counter + "),";
+                    cmd.Parameters.Add("@UserId" + counter, MySqlDbType.UInt32).Value = userId;
+                    cmd.Parameters.Add("@BookingDate" + counter, MySqlDbType.VarChar).Value = t.BookingDate;
+                    cmd.Parameters.Add("@ValueDate" + counter, MySqlDbType.VarChar).Value = t.ValueDate;
+                    cmd.Parameters.Add("@Amount" + counter, MySqlDbType.Decimal).Value = t.Amount;
+                    cmd.Parameters.Add("@Currency" + counter, MySqlDbType.VarChar).Value = t.Currency;
+                    cmd.Parameters.Add("@Description" + counter, MySqlDbType.VarChar).Value = t.Description;
+                    cmd.Parameters.Add("@Type" + counter, MySqlDbType.VarChar).Value = t.Type;
+                    cmd.Parameters.Add("@Saldo" + counter, MySqlDbType.Decimal).Value = t.Saldo;
+                    cmd.Parameters.Add("@Counterparty" + counter, MySqlDbType.VarChar).Value = t.Counterparty;
+                    counter++;
+                }
+
+                cmd.CommandText = cmdString.Substring(0, cmdString.Length - 1);
                 cmd.ExecuteNonQuery();
 
-                // TODO: this might be an issue when db calls are made async
-                MySqlCommand cmd2 = new MySqlCommand("select * from transaction where id = LAST_INSERT_ID()", conn);
-
-                using (var reader = cmd2.ExecuteReader())
+                if (transactions.Count == 1)
                 {
-                    while (reader.Read())
+                    // TODO: this might be an issue when db calls are made async
+                    MySqlCommand cmd2 = new MySqlCommand("select * from transaction where id = LAST_INSERT_ID()", conn);
+
+                    using (var reader = cmd2.ExecuteReader())
                     {
-                        transaction = new Transaction(){
-                            UserId = Convert.ToUInt32(reader["UserId"]),
-                            Id = Convert.ToUInt32(reader["Id"]),
-                            BookingDate = reader["BookingDate"].ToString(),
-                            ValueDate = reader["ValueDate"].ToString(),
-                            Amount = Convert.ToDecimal(reader["Amount"]),
-                            Currency = reader["Currency"].ToString(),
-                            Description = reader["Description"].ToString(),
-                            Type = reader["Type"].ToString(),
-                            Saldo = Convert.ToDecimal(reader["Saldo"]),
-                            Counterparty = reader["Counterparty"].ToString()
-                        };
+                        while (reader.Read())
+                        {
+                            transaction = new Transaction(){
+                                UserId = Convert.ToUInt32(reader["UserId"]),
+                                Id = Convert.ToUInt32(reader["Id"]),
+                                BookingDate = reader["BookingDate"].ToString(),
+                                ValueDate = reader["ValueDate"].ToString(),
+                                Amount = Convert.ToDecimal(reader["Amount"]),
+                                Currency = reader["Currency"].ToString(),
+                                Description = reader["Description"].ToString(),
+                                Type = reader["Type"].ToString(),
+                                Saldo = Convert.ToDecimal(reader["Saldo"]),
+                                Counterparty = reader["Counterparty"].ToString()
+                            };
+                        }
                     }
                 }
 
