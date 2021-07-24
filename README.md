@@ -21,9 +21,13 @@ docker network ls
 
 //enter docker container (in this case db)
 docker exec -it dev-mysql mysql
+
 docker exec -it dev-mysql bash
+
 mysql -u dev -p (see appsettings.json)
 
+one command from root:
+docker exec -it dev-mysql -u dev -p
 /////////////////////////////
 release new version of server
 /////////////////////////////
