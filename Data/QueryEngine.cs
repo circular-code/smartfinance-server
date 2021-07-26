@@ -267,8 +267,7 @@ namespace Smartfinance_server.Data
 
         public Transaction CreateTransaction(List<Transaction> transactions, uint userId)
         {
-
-            Transaction transaction = null;
+            Transaction transaction = new Transaction();
             using (MySqlConnection conn = DbContext.GetConnection())
             {
                 conn.Open();
