@@ -1,4 +1,3 @@
-C:\Users\Steph\Desktop\code\smartfinance-server\obj\Debug\net5.0\smartfinance-server.csprojAssemblyReference.cache
 C:\Users\Steph\Desktop\code\smartfinance-server\obj\Debug\net5.0\smartfinance-server.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\Steph\Desktop\code\smartfinance-server\obj\Debug\net5.0\smartfinance-server.AssemblyInfoInputs.cache
 C:\Users\Steph\Desktop\code\smartfinance-server\obj\Debug\net5.0\smartfinance-server.AssemblyInfo.cs
