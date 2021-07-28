@@ -82,3 +82,4 @@ C:\Users\Steph\Desktop\code\smartfinance-server\bin\Debug\net5.0\Microsoft.OpenA
 C:\Users\Steph\Desktop\code\smartfinance-server\bin\Debug\net5.0\Swashbuckle.AspNetCore.Swagger.dll
 C:\Users\Steph\Desktop\code\smartfinance-server\bin\Debug\net5.0\Swashbuckle.AspNetCore.SwaggerGen.dll
 C:\Users\Steph\Desktop\code\smartfinance-server\bin\Debug\net5.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+C:\Users\Steph\Desktop\code\smartfinance-server\obj\Debug\net5.0\smartfinance-server.csprojAssemblyReference.cache

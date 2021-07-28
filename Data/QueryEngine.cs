@@ -280,6 +280,9 @@ namespace Smartfinance_server.Data
 
                 foreach (Transaction t in transactions)
                 {
+                    if (t == null)
+                        continue;
+
                     cmdString += "(@UserId" + counter + ", @BookingDate" + counter + ", @ValueDate" + counter + ", @Amount" + counter + ", @Currency" + counter + ", @Description" + counter + ", @Type" + counter + ", @Saldo" + counter + ", @Counterparty" + counter + "),";
                     cmd.Parameters.Add("@UserId" + counter, MySqlDbType.UInt32).Value = userId;
                     cmd.Parameters.Add("@BookingDate" + counter, MySqlDbType.VarChar).Value = t.BookingDate;
