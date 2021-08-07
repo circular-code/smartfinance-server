@@ -169,7 +169,6 @@ namespace Smartfinance_server.Data
                             cmd.Parameters.Add("@" + kvp.Key, MySqlDbType.Decimal).Value = kvp.Value.GetDecimal();
                             break;
 
-                        case "userId":
                         case "primaryTransactionId":
                             sb.Insert(0, kvp.Key + "=@" + kvp.Key + ",");
                             cmd.Parameters.Add("@" + kvp.Key, MySqlDbType.UInt32).Value = kvp.Value.GetUInt32();
@@ -200,8 +199,206 @@ namespace Smartfinance_server.Data
 
         #endregion
 
+
+        #region Liability
+
+        public IEnumerable<Liability> GetAllLiabilities(uint userId)
+        {
+            List<Liability> list = new List<Liability>();
+
+            using (MySqlConnection conn = DbContext.GetConnection())
+            {
+                conn.Open();
+                MySqlCommand cmd = new MySqlCommand("SELECT * FROM liability WHERE UserId = " + userId.ToString(), conn);
+
+                using (MySqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        list.Add(new Liability()
+                        {
+                            UserId = Convert.ToUInt32(reader["UserId"]),
+                            Id = Convert.ToUInt32(reader["Id"]),
+                            CreationDate = reader["CreationDate"].ToString(),
+                            ContractDate = reader["ContractDate"].ToString(),
+                            InitialValue = Convert.ToDecimal(reader["InitialValue"]),
+                            CurrentValue = Convert.ToDecimal(reader["CurrentValue"]),
+                            Currency = reader["Currency"].ToString(),
+                            Interest = Convert.ToDecimal(reader["Interest"]),
+                            Annuity = Convert.ToDecimal(reader["Annuity"]),
+                            MaturityDate = reader["MaturityDate"].ToString(),
+                            RefinancingDate = reader["RefinancingDate"].ToString(),
+                            Description = reader["Description"].ToString(),
+                            Type = reader["Type"].ToString(),
+                            Counterparty = reader["Counterparty"].ToString(),
+                            AssetIds = reader["AssetIds"].ToString(),
+                            TransactionIds = reader["TransactionIds"].ToString()
+                        });
+                    }
+                }
+            }
+            return list;
+        }
+
+        public Liability GetLiability(uint id, uint userId)
+        {
+            Liability? liability = null;
+
+            using (MySqlConnection conn = DbContext.GetConnection())
+            {
+                conn.Open();
+                MySqlCommand cmd = new MySqlCommand("SELECT * FROM liability WHERE Id = " + id + " AND UserId = " + userId.ToString(), conn);
+
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        liability = new Liability()
+                        {
+                            UserId = Convert.ToUInt32(reader["UserId"]),
+                            Id = Convert.ToUInt32(reader["Id"]),
+                            CreationDate = reader["CreationDate"].ToString(),
+                            ContractDate = reader["ContractDate"].ToString(),
+                            InitialValue = Convert.ToDecimal(reader["InitialValue"]),
+                            CurrentValue = Convert.ToDecimal(reader["CurrentValue"]),
+                            Currency = reader["Currency"].ToString(),
+                            Interest = Convert.ToDecimal(reader["Interest"]),
+                            Annuity = Convert.ToDecimal(reader["Annuity"]),
+                            MaturityDate = reader["MaturityDate"].ToString(),
+                            RefinancingDate = reader["RefinancingDate"].ToString(),
+                            Description = reader["Description"].ToString(),
+                            Type = reader["Type"].ToString(),
+                            Counterparty = reader["Counterparty"].ToString(),
+                            AssetIds = reader["AssetIds"].ToString(),
+                            TransactionIds = reader["TransactionIds"].ToString()
+                        };
+                    }
+                }
+            }
+            return liability;
+        }
+
+        public Liability CreateLiability(Liability liability, uint userId)
+        {
+            using (MySqlConnection conn = DbContext.GetConnection())
+            {
+                conn.Open();
+
+                MySqlCommand cmd = new MySqlCommand("INSERT INTO liability (UserId,CreationDate,ContractDate,InitialValue,CurrentValue,Currency,Interest,Annuity,MaturityDate,RefinancingDate,Description,Type,Counterparty,AssetIds,TransactionIds) VALUES (@UserId,@CreationDate,@ContractDate,@InitialValue,@CurrentValue,@Currency,@Interest,@Annuity,@MaturityDate,@RefinancingDate,@Description,@Type,@Counterparty,@AssetIds,@TransactionIds)", conn);
+                cmd.Parameters.Add("@UserId", MySqlDbType.UInt32).Value = userId;
+                cmd.Parameters.Add("@CreationDate", MySqlDbType.VarChar).Value = liability.CreationDate;
+                cmd.Parameters.Add("@ContractDate", MySqlDbType.VarChar).Value = liability.ContractDate;
+                cmd.Parameters.Add("@InitialValue", MySqlDbType.Decimal).Value = liability.InitialValue;
+                cmd.Parameters.Add("@CurrentValue", MySqlDbType.Decimal).Value = liability.CurrentValue;
+                cmd.Parameters.Add("@Currency", MySqlDbType.VarChar).Value = liability.Currency;
+                cmd.Parameters.Add("@Interest", MySqlDbType.Decimal).Value = liability.Interest;
+                cmd.Parameters.Add("@Annuity", MySqlDbType.Decimal).Value = liability.Annuity;
+                cmd.Parameters.Add("@MaturityDate", MySqlDbType.VarChar).Value = liability.MaturityDate;
+                cmd.Parameters.Add("@RefinancingDate", MySqlDbType.VarChar).Value = liability.RefinancingDate;
+                cmd.Parameters.Add("@Description", MySqlDbType.VarChar).Value = liability.Description;
+                cmd.Parameters.Add("@Type", MySqlDbType.VarChar).Value = liability.Type;
+                cmd.Parameters.Add("@Counterparty", MySqlDbType.VarChar).Value = liability.Counterparty;
+                cmd.Parameters.Add("@AssetIds", MySqlDbType.VarChar).Value = liability.AssetIds;
+                cmd.Parameters.Add("@TransactionIds", MySqlDbType.VarChar).Value = liability.TransactionIds;
+
+                cmd.ExecuteNonQuery();
+
+                // TODO: this might be an issue when db calls are made async
+                MySqlCommand cmd2 = new MySqlCommand("select * from liability where id = LAST_INSERT_ID()", conn);
+
+                using (var reader = cmd2.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        liability = new Liability()
+                        {
+                            UserId = Convert.ToUInt32(reader["UserId"]),
+                            Id = Convert.ToUInt32(reader["Id"]),
+                            CreationDate = reader["CreationDate"].ToString(),
+                            ContractDate = reader["ContractDate"].ToString(),
+                            InitialValue = Convert.ToDecimal(reader["InitialValue"]),
+                            CurrentValue = Convert.ToDecimal(reader["CurrentValue"]),
+                            Currency = reader["Currency"].ToString(),
+                            Interest = Convert.ToDecimal(reader["Interest"]),
+                            Annuity = Convert.ToDecimal(reader["Annuity"]),
+                            MaturityDate = reader["MaturityDate"].ToString(),
+                            RefinancingDate = reader["RefinancingDate"].ToString(),
+                            Description = reader["Description"].ToString(),
+                            Type = reader["Type"].ToString(),
+                            Counterparty = reader["Counterparty"].ToString(),
+                            AssetIds = reader["AssetIds"].ToString(),
+                            TransactionIds = reader["TransactionIds"].ToString()
+                        };
+                    }
+                }
+                conn.Close();
+            }
+            return liability;
+        }
+
+        public object UpdateLiability(uint id, uint userId, Dictionary<string, JsonElement> updates)
+        {
+            using (MySqlConnection conn = DbContext.GetConnection())
+            {
+                conn.Open();
+
+                StringBuilder sb = new StringBuilder("");
+                MySqlCommand cmd = new MySqlCommand("", conn);
+
+                foreach (KeyValuePair<string, JsonElement> kvp in updates)
+                {
+                    switch (kvp.Key)
+                    {
+                        case "creationDate":
+                        case "contractDate":
+                        case "currency":
+                        case "maturityDate":
+                        case "refinancingDate":
+                        case "description":
+                        case "type":
+                        case "counterparty":
+                        case "assetIds":
+                        case "transactionIds":
+                            sb.Insert(0, kvp.Key + "=@" + kvp.Key + ",");
+                            cmd.Parameters.Add("@" + kvp.Key, MySqlDbType.VarChar).Value = kvp.Value.GetString();
+                            break;
+
+                        case "initialValue":
+                        case "currentValue":
+                        case "interest":
+                        case "annuity":
+                            sb.Insert(0, kvp.Key + "=@" + kvp.Key + ",");
+                            cmd.Parameters.Add("@" + kvp.Key, MySqlDbType.Decimal).Value = kvp.Value.GetDecimal();
+                            break;
+                    }
+                }
+
+                cmd.CommandText = "UPDATE liability SET " + sb.ToString().TrimEnd(',') + " WHERE id = " + id + " AND UserId = " + userId.ToString();
+
+                cmd.ExecuteNonQuery();
+                conn.Close();
+            }
+            return id;
+        }
+
+        public void DeleteLiability(uint id, uint userId)
+        {
+            using (MySqlConnection conn = DbContext.GetConnection())
+            {
+                conn.Open();
+
+                MySqlCommand cmd = new MySqlCommand("DELETE FROM liability WHERE id = " + id + " AND UserId = " + userId.ToString(), conn);
+
+                cmd.ExecuteNonQuery();
+                conn.Close();
+            }
+        }
+
+        #endregion
+
+
         #region Transaction
-            
+
         public IEnumerable<Transaction> GetAllTransactions(uint userId)
         {
             List<Transaction> list = new List<Transaction>();
@@ -356,11 +553,6 @@ namespace Smartfinance_server.Data
                         case "saldo":
                             sb.Insert(0, kvp.Key + "=@" + kvp.Key + ",");
                             cmd.Parameters.Add("@" + kvp.Key, MySqlDbType.Decimal).Value = kvp.Value.GetDecimal();
-                            break;
-
-                        case "userId":
-                            sb.Insert(0, kvp.Key + "=@" + kvp.Key + ",");
-                            cmd.Parameters.Add("@" + kvp.Key, MySqlDbType.UInt32).Value = kvp.Value.GetInt32();
                             break;
                     }
                 }
