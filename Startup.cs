@@ -19,6 +19,7 @@ namespace Smartfinance_server
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors();
             services.AddControllers();
             services.AddScoped<QueryEngine>();
             services.AddHttpContextAccessor();
@@ -45,6 +46,10 @@ namespace Smartfinance_server
                     app.UseDeveloperExceptionPage();
                 //else
                 //app.UseExceptionHandler("/error");
+
+                app.UseCors(
+                    options => options.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()
+                );
 
                 app.UseSwagger();
                 app.UseSwaggerUI(c =>
