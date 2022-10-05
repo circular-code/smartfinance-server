@@ -35,6 +35,8 @@ namespace Smartfinance_server
                 {
                     config.Cookie.Name = "Identity.Cookie";
                     config.LoginPath = "/api/user/login";
+                    config.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.None;
+                    config.Cookie.SecurePolicy = Microsoft.AspNetCore.Http.CookieSecurePolicy.Always;
                 });
         }
 
@@ -45,11 +47,7 @@ namespace Smartfinance_server
                 if (env.IsDevelopment())
                     app.UseDeveloperExceptionPage();
                 //else
-                //app.UseExceptionHandler("/error");
-
-                app.UseCors(
-                    options => options.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()
-                );
+                //app.UseExceptionHandler("/error");              
 
                 app.UseSwagger();
                 app.UseSwaggerUI(c =>
@@ -66,6 +64,11 @@ namespace Smartfinance_server
 
             // where do you want to go?
             app.UseRouting();
+
+            // add cors headers for access from anywhere
+            app.UseCors(
+                options => options.WithOrigins("http://malikotinas.com", "http://localhost:3000").AllowAnyHeader().AllowAnyMethod().AllowCredentials()
+            );
 
             // // who are you?
             app.UseAuthentication();
