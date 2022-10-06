@@ -65,9 +65,9 @@ namespace Smartfinance_server
             // where do you want to go?
             app.UseRouting();
 
-            // add cors headers for access from anywhere
+            // add cors headers
             app.UseCors(
-                options => options.WithOrigins("http://malikotinas.com", "http://localhost:3000").AllowAnyHeader().AllowAnyMethod().AllowCredentials()
+                options => options.WithOrigins("https://malikotinas.com", "https://localhost:3000").AllowAnyHeader().AllowAnyMethod().AllowCredentials()
             );
 
             // // who are you?
